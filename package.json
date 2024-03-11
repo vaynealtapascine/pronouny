@@ -1,0 +1,20 @@
+{
+	"name": "pronouny",
+	"version": "0.1.0",
+	"description": "a small, typed utility library to determine the correct pronoun from a string and several utility functions.",
+	"main": "./lib/cjs/index.js",
+	"module": "./lib/esm/index.js",
+	"files": [
+		"lib/"
+	],
+	"scripts": {
+		"test": "tsc -p tsconfig.json && node ./lib/cjs/index.js",
+		"tsc": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json",
+		"prepublishOnly": "npm run tsc"
+	},
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {
+		"typescript": "^5.3.3"
+	}
+}
