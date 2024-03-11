@@ -20,31 +20,35 @@ This class is intended to verify and retrieve correct pronouns. It is centered a
 
 ## Example
 
-```
-import { Pronouny } from 'pronouny';
+```ts
+import { Pronouny } from "pronouny";
 
 // Create a new instance of the Validate class
 const pronounValidator = new Pronouny.Validate();
 
 // Create a new Pronoun object for ze/hir pronouns
-const pronounZe = new Pronouny.Pronoun(
-	'ze', 'hir', 'hir', 'hirs', 'hirself'
-);
+const pronounZe = new Pronouny.Pronoun({
+	subject: "ze",
+	object: "hir",
+	possessiveAdjective: "hir",
+	possessivePronoun: "hirs",
+	reflexive: "hirself",
+});
 
 // Add the pronoun to the pronounSet map
-pronounValidator.extend( "ze", pronounZe );
+pronounValidator.extend("ze", pronounZe);
 
 // Set someone's pronouns.
 const vayne = {
 	username: vaynegarden,
-	pronouns: pronounValidator.createSetFrom( "she/ze/they"),
-}
+	pronouns: pronounValidator.createSetFrom("she/ze/they"),
+};
 
 // Resolve the pronouns in your app
-console.log( vayne.username + " updated " +
-             vayne.pronouns.use( "psAdj" ) + " status." );
+console.log(
+	vayne.username + " updated " + vayne.pronouns.use("psAdj") + " status."
+);
 // Returns "vaynegarden updated her status", "vaynegarden
 // updated hir status", or "vaynegarden updated their status",
 // selected randomly among the three.
-
 ```

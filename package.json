@@ -1,6 +1,6 @@
 {
 	"name": "pronouny",
-	"version": "0.1.0",
+	"version": "0.1.2",
 	"description": "a small, typed utility library to determine the correct pronoun from a string and several utility functions.",
 	"main": "./lib/cjs/index.js",
 	"module": "./lib/esm/index.js",
@@ -16,5 +16,18 @@
 	"license": "ISC",
 	"devDependencies": {
 		"typescript": "^5.3.3"
-	}
+	},
+	"keywords": [
+		"pronouns",
+		"english",
+		"language",
+		"text",
+		"grammar",
+		"gender"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/vaynealtapascine/pronouny"
+	},
+	"homepage": "https://github.com/vaynealtapascine/pronouny"
 }
