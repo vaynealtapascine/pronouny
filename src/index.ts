@@ -10,91 +10,125 @@ class Pronoun {
 	rfx: Array<string>;
 
 	constructor(pronouns: {
-		subject: Array<string> | string,
-		object: Array<string> | string,
-		possessive: Array<string> | string,
-		psAdjective: Array<string> | string,
-		reflexive: Array<string> | string
+		subject: Array<string> | string;
+		object: Array<string> | string;
+		possessive: Array<string> | string;
+		psAdjective: Array<string> | string;
+		reflexive: Array<string> | string;
 	}) {
-		this.sbj = typeof pronouns.subject === 'string' ? [pronouns.subject] : pronouns.subject;
-		this.obj = typeof pronouns.object === 'string' ? [pronouns.object] : pronouns.object;
-		this.psv = typeof pronouns.possessive === 'string' ? [pronouns.possessive] : pronouns.possessive;
-		this.psj = typeof pronouns.psAdjective === 'string' ? [pronouns.psAdjective] : pronouns.psAdjective;
-		this.rfx = typeof pronouns.reflexive === 'string' ? [pronouns.reflexive] : pronouns.reflexive;
+		this.sbj =
+			typeof pronouns.subject === "string"
+				? [pronouns.subject]
+				: pronouns.subject;
+		this.obj =
+			typeof pronouns.object === "string"
+				? [pronouns.object]
+				: pronouns.object;
+		this.psv =
+			typeof pronouns.possessive === "string"
+				? [pronouns.possessive]
+				: pronouns.possessive;
+		this.psj =
+			typeof pronouns.psAdjective === "string"
+				? [pronouns.psAdjective]
+				: pronouns.psAdjective;
+		this.rfx =
+			typeof pronouns.reflexive === "string"
+				? [pronouns.reflexive]
+				: pronouns.reflexive;
+		return this;
 	}
 
 	subject(index = -1, failQuietly = true, useRandom = true) {
 		switch (true) {
+			case this.sbj.length === 1:
+				return this.sbj[0];
 			case index === -1 && useRandom:
 			case index > this.sbj.length && useRandom:
-				return this.sbj[randomToLimit(this.sbj.length)]
+				return this.sbj[randomToLimit(this.sbj.length)];
 			case index <= this.sbj.length:
-				return this.sbj[index]
+				return this.sbj[index];
 			case failQuietly:
-				return this.sbj[0]
+				return this.sbj[0];
 			default:
-				throw new Error(`could not retrieve index ${index} from "${this.sbj[0]}" subject pronoun`);
+				throw new Error(
+					`could not retrieve index ${index} from "${this.sbj[0]}" subject pronoun`
+				);
 		}
 	}
-	
+
 	object(index = -1, failQuietly = true, useRandom = true) {
-		let result;
 		switch (true) {
+			case this.obj.length === 1:
+				return this.obj[0];
 			case index === -1 && useRandom:
 			case index > this.obj.length && useRandom:
-				return this.obj[randomToLimit(this.obj.length)]
+				return this.obj[randomToLimit(this.obj.length)];
 			case index <= this.obj.length:
-				return this.obj[index]
+				return this.obj[index];
 			case failQuietly:
-				return this.obj[0]
+				return this.obj[0];
 			default:
-				throw new Error(`could not retrieve index ${index} from "${this.sbj[0]}" object pronoun`);
+				throw new Error(
+					`could not retrieve index ${index} from "${this.sbj[0]}" object pronoun`
+				);
 		}
 	}
 
 	possessive(index = -1, failQuietly = true, useRandom = true) {
 		switch (true) {
+			case this.psv.length === 1:
+				return this.psv[0];
 			case index === -1 && useRandom:
 			case index > this.psv.length && useRandom:
-				return this.psv[randomToLimit(this.psv.length)]
+				return this.psv[randomToLimit(this.psv.length)];
 			case index <= this.psv.length:
-				return this.psv[index]
+				return this.psv[index];
 			case failQuietly:
-				return this.psv[0]
+				return this.psv[0];
 			default:
-				throw new Error(`could not retrieve index ${index} from "${this.sbj[0]}" possessive pronoun`);
+				throw new Error(
+					`could not retrieve index ${index} from "${this.sbj[0]}" possessive pronoun`
+				);
 		}
 	}
 
 	psAdjective(index = -1, failQuietly = true, useRandom = true) {
 		switch (true) {
+			case this.psj.length === 1:
+				return this.psj[0];
 			case index === -1 && useRandom:
 			case index > this.psj.length && useRandom:
-				return this.psj[randomToLimit(this.psj.length)]
+				return this.psj[randomToLimit(this.psj.length)];
 			case index <= this.psj.length:
-				return this.psj[index]
+				return this.psj[index];
 			case failQuietly:
-				return this.psj[0]
+				return this.psj[0];
 			default:
-				throw new Error(`could not retrieve index ${index} from "${this.sbj[0]}" possessive adjective pronoun`);
+				throw new Error(
+					`could not retrieve index ${index} from "${this.sbj[0]}" possessive adjective pronoun`
+				);
 		}
 	}
 
 	reflexive(index = -1, failQuietly = true, useRandom = true) {
 		switch (true) {
+			case this.rfx.length === 1:
+				return this.rfx[0];
 			case index === -1 && useRandom:
 			case index > this.rfx.length && useRandom:
-				return this.rfx[randomToLimit(this.rfx.length)]
+				return this.rfx[randomToLimit(this.rfx.length)];
 			case index <= this.rfx.length:
-				return this.rfx[index]
+				return this.rfx[index];
 			case failQuietly:
-				return this.rfx[0]
+				return this.rfx[0];
 			default:
-				throw new Error(`could not retrieve index ${index} from "${this.sbj[0]}" reflexive pronoun`);
+				throw new Error(
+					`could not retrieve index ${index} from "${this.sbj[0]}" reflexive pronoun`
+				);
 		}
 	}
 }
-type PronounForms = keyof Pronoun;
 
 class PronounSet {
 	pronouns: Set<Pronoun>;
@@ -134,6 +168,7 @@ class PronounSet {
 				});
 				break;
 		}
+		return this;
 	}
 
 	add(
@@ -188,9 +223,15 @@ class PronounSet {
 		return this;
 	}
 
-	use(index = -1, failQuietly = this.resolver.config.failQuietly, useRandom = this.resolver.config.useRandom): Pronoun {
+	use(
+		index = -1,
+		failQuietly = this.resolver.config.failQuietly,
+		useRandom = this.resolver.config.useRandom
+	): Pronoun {
 		const indexable = Array.from(this.pronouns);
 		switch (true) {
+			case indexable.length === 1:
+				return indexable[0];
 			case indexable.length === 0:
 				if (failQuietly) {
 					return this.resolver.resolve("they");
@@ -210,63 +251,103 @@ class PronounSet {
 		}
 	}
 
-	subject(index = -1, failQuietly = this.resolver.config.failQuietly, useRandom = this.resolver.config.useRandom) {
-		return this.use(index, failQuietly, useRandom).subject(-1, failQuietly, useRandom);
+	subject(
+		index = -1,
+		failQuietly = this.resolver.config.failQuietly,
+		useRandom = this.resolver.config.useRandom
+	) {
+		return this.use(index, failQuietly, useRandom).subject(
+			-1,
+			failQuietly,
+			useRandom
+		);
 	}
 
-	object(index = -1, failQuietly = this.resolver.config.failQuietly, useRandom = this.resolver.config.useRandom) {
-		return this.use(index, failQuietly, useRandom).object(-1, failQuietly, useRandom);
+	object(
+		index = -1,
+		failQuietly = this.resolver.config.failQuietly,
+		useRandom = this.resolver.config.useRandom
+	) {
+		return this.use(index, failQuietly, useRandom).object(
+			-1,
+			failQuietly,
+			useRandom
+		);
 	}
 
-	possessive(index = -1, failQuietly = this.resolver.config.failQuietly, useRandom = this.resolver.config.useRandom) {
-		return this.use(index, failQuietly, useRandom).possessive(-1, failQuietly, useRandom);
+	possessive(
+		index = -1,
+		failQuietly = this.resolver.config.failQuietly,
+		useRandom = this.resolver.config.useRandom
+	) {
+		return this.use(index, failQuietly, useRandom).possessive(
+			-1,
+			failQuietly,
+			useRandom
+		);
 	}
 
-	psAdjective(index = -1, failQuietly = this.resolver.config.failQuietly, useRandom = this.resolver.config.useRandom) {
-		return this.use(index, failQuietly, useRandom).psAdjective(-1, failQuietly, useRandom);
+	psAdjective(
+		index = -1,
+		failQuietly = this.resolver.config.failQuietly,
+		useRandom = this.resolver.config.useRandom
+	) {
+		return this.use(index, failQuietly, useRandom).psAdjective(
+			-1,
+			failQuietly,
+			useRandom
+		);
 	}
 
-	reflexive(index = -1, failQuietly = this.resolver.config.failQuietly, useRandom = this.resolver.config.useRandom) {
-		return this.use(index, failQuietly, useRandom).reflexive(-1, failQuietly, useRandom);
+	reflexive(
+		index = -1,
+		failQuietly = this.resolver.config.failQuietly,
+		useRandom = this.resolver.config.useRandom
+	) {
+		return this.use(index, failQuietly, useRandom).reflexive(
+			-1,
+			failQuietly,
+			useRandom
+		);
 	}
 }
 
-const pronounHe: Pronoun = new Pronoun ({
+const pronounHe: Pronoun = new Pronoun({
 	subject: ["he"],
 	object: ["him"],
 	possessive: ["his"],
 	psAdjective: ["his"],
 	reflexive: ["himself"],
 });
-const pronounShe: Pronoun = new Pronoun ({
+const pronounShe: Pronoun = new Pronoun({
 	subject: ["she"],
 	object: ["her"],
 	possessive: ["hers"],
 	psAdjective: ["her"],
 	reflexive: ["herself"],
 });
-const pronounThey: Pronoun = new Pronoun ({
+const pronounThey: Pronoun = new Pronoun({
 	subject: ["they"],
 	object: ["them"],
 	possessive: ["theirs"],
 	psAdjective: ["their"],
 	reflexive: ["theirself", "theirselves", "themselves", "themself"],
 });
-const pronounYou: Pronoun = new Pronoun ({
+const pronounYou: Pronoun = new Pronoun({
 	subject: ["you"],
 	object: ["you"],
 	possessive: ["yours"],
 	psAdjective: ["your"],
 	reflexive: ["yourself"],
 });
-const pronounI: Pronoun = new Pronoun ({
+const pronounI: Pronoun = new Pronoun({
 	subject: ["I"],
 	object: ["me"],
 	possessive: ["mine"],
 	psAdjective: ["my"],
 	reflexive: ["myself"],
 });
-const pronounWe: Pronoun = new Pronoun ({
+const pronounWe: Pronoun = new Pronoun({
 	subject: ["we"],
 	object: ["us"],
 	possessive: ["our"],
@@ -299,6 +380,7 @@ export default class Pronouny {
 			[pronounHe.sbj[0], pronounHe],
 			[pronounShe.sbj[0], pronounShe],
 		]);
+		return this;
 	}
 
 	resolve(pronoun: string, deepSearch = this.config.deepSearch): Pronoun {
@@ -325,34 +407,38 @@ export default class Pronouny {
 		}
 	}
 
-	add(pronoun: Pronoun): void {
+	add(pronoun: Pronoun) {
 		this.resolveMap.set(pronoun.sbj[0], pronoun);
+		return this;
 	}
 
-	remove(pronoun: Pronoun): void {
+	remove(pronoun: Pronoun) {
 		this.resolveMap.delete(pronoun.sbj[0]);
+		return this;
 	}
 
-	set(
-		pronouns: string | Array<string>,
-		delimiter: string = "/"
-	): PronounSet {
-		if (typeof pronouns === 'string' && delimiter !== undefined) {
+	set(pronouns: string | Array<string>, delimiter: string = "/"): PronounSet {
+		if (typeof pronouns === "string" && delimiter !== undefined) {
 			pronouns = pronouns.split(delimiter);
 		}
 		let result: PronounSet = new PronounSet(this, pronouns);
 		return result;
 	}
 
-	new(pronouns: {
-		subject: Array<string> | string,
-		object: Array<string> | string,
-		possessive: Array<string> | string,
-		psAdjective: Array<string> | string,
-		reflexive: Array<string> | string
-	}, autoAppend = true) {
+	new(
+		pronouns: {
+			subject: Array<string> | string;
+			object: Array<string> | string;
+			possessive: Array<string> | string;
+			psAdjective: Array<string> | string;
+			reflexive: Array<string> | string;
+		},
+		autoAppend = true
+	) {
 		const newPronoun = new Pronoun(pronouns);
-		this.add(newPronoun);
-		return newPronoun
+		if (autoAppend) {
+			this.add(newPronoun);
+		}
+		return newPronoun;
 	}
 }
