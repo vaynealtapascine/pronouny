@@ -24,8 +24,7 @@ export namespace Pronouny {
 		possessivePronoun: Array<string>;
 		reflexive: Array<string>;
 
-		/**
-		 * # Pronoun Constructor
+		/** # Pronoun Constructor
 		 * In order to construct a new `Pronoun`, you will need to pass in an
 		 * object which contains at least one `subject` pronoun, one `object`
 		 * pronoun, one `possessiveAdjective`, one `possessivePronoun`, and one
@@ -65,10 +64,12 @@ export namespace Pronouny {
 		}
 
 		/**## Subject Getter
-		 * Retrieves a subject pronoun. If no index is provided, it will retrieve
-		 * a random one from the array *(recommended)*.
+		 * Retrieves an subject pronoun. If no index is provided, it will retrieve a
+		 * random one from the array *(recommended)*. **This will fail silently and
+		 * return the last pronoun instead if you submit if an invalid index. You
+		 * must opt in to exception handling.**
 		 *
-		 * @throws if you index out of `subject` array length.
+		 * @throws if you index out of `subject` array length AND failQuietly is false.
 		 *
 		 * @param index
 		 * by default, selects randomly.
@@ -76,19 +77,26 @@ export namespace Pronouny {
 		 * @returns a string.
 		 */
 		sbj(
-			index: number = Math.floor(Math.random() * this.subject.length)
+			index: number = Math.floor(Math.random() * this.subject.length),
+			failQuietly: boolean = true
 		): string {
 			if (index >= this.subject.length) {
-				throw new Error("No subject pronoun at this index");
+				if (failQuietly) {
+					return this.subject[this.subject.length - 1];
+				} else {
+					throw new Error("Index out of range for object pronouns.");
+				}
 			}
 			return this.subject[index];
 		}
 
 		/**## Object Getter
-		 * Retrieves an object pronoun. If no index is provided, it will retrieve
-		 * a random one from the array *(recommended)*.
+		 * Retrieves an object pronoun. If no index is provided, it will retrieve a
+		 * random one from the array *(recommended)*. **This will fail silently and
+		 * return the last pronoun instead if you submit if an invalid index. You
+		 * must opt in to exception handling.**
 		 *
-		 * @throws if you index out of `object` array length.
+		 * @throws if you index out of `object` array length AND failQuietly is false.
 		 *
 		 * @param index
 		 * by default, selects randomly.
@@ -96,19 +104,27 @@ export namespace Pronouny {
 		 * @returns a string.
 		 */
 		obj(
-			index: number = Math.floor(Math.random() * this.object.length)
+			index: number = Math.floor(Math.random() * this.object.length),
+			failQuietly: boolean = true
 		): string {
 			if (index >= this.object.length) {
-				throw new Error("No object pronoun at this index");
+				if (failQuietly) {
+					return this.object[this.object.length - 1];
+				} else {
+					throw new Error("Index out of range for object pronouns.");
+				}
 			}
 			return this.object[index];
 		}
 
 		/**## Possessive Adjective Getter
-		 * Retrieves a possessive adjective pronoun. If no index is provided, it will retrieve
-		 * a random one from the array *(recommended)*.
+		 * Retrieves a possessive adjective pronoun. If no index is provided, it will
+		 * retrieve a random one from the array *(recommended)*. **This will fail
+		 * silently and return the last pronoun instead if you submit if an invalid
+		 * index. You must opt in to exception handling.**
 		 *
-		 * @throws if you index out of `possessiveAdjective` array length.
+		 * @throws if you index out of `possessiveAdjective` array length AND
+		 * failQuietly is false.
 		 *
 		 * @param index
 		 * by default, selects randomly.
@@ -118,19 +134,31 @@ export namespace Pronouny {
 		psAdj(
 			index: number = Math.floor(
 				Math.random() * this.possessiveAdjective.length
-			)
+			),
+			failQuietly: boolean = true
 		): string {
 			if (index >= this.possessiveAdjective.length) {
-				throw new Error("No possessive adjective at this index");
+				if (failQuietly) {
+					return this.possessiveAdjective[
+						this.possessiveAdjective.length - 1
+					];
+				} else {
+					throw new Error(
+						"Index out of range for possessive adjective pronouns."
+					);
+				}
 			}
 			return this.possessiveAdjective[index];
 		}
 
 		/**## Possessive Pronoun Getter
 		 * Retrieves a possessive pronoun. If no index is provided, it will retrieve
-		 * a random one from the array *(recommended)*.
+		 * a random one from the array *(recommended)*. **This will fail silently
+		 * and return the last pronoun instead if you submit if an invalid index.
+		 * You must opt in to exception handling.**
 		 *
-		 * @throws if you index out of `possessivePronoun` array length.
+		 * @throws if you index out of `possessivePronoun` array length AND
+		 * failQuietly is false.
 		 *
 		 * @param index
 		 * by default, selects randomly.
@@ -140,19 +168,31 @@ export namespace Pronouny {
 		psPrn(
 			index: number = Math.floor(
 				Math.random() * this.possessivePronoun.length
-			)
+			),
+			failQuietly: boolean = true
 		): string {
 			if (index >= this.possessivePronoun.length) {
-				throw new Error("No possessive pronoun at this index");
+				if (failQuietly) {
+					return this.possessivePronoun[
+						this.possessivePronoun.length - 1
+					];
+				} else {
+					throw new Error(
+						"Index out of range for possessive pronouns."
+					);
+				}
 			}
 			return this.possessivePronoun[index];
 		}
 
 		/**## Reflexive Pronoun Getter
 		 * Retrieves a reflexive pronoun. If no index is provided, it will retrieve
-		 * a random one from the array *(recommended)*.
+		 * a random one from the array *(recommended)*. **This will fail silently
+		 * and return the last pronoun instead if you submit if an invalid index.
+		 * You must opt in to exception handling.**
 		 *
-		 * @throws if you index out of `reflexive` array length.
+		 * @throws if you index out of `reflexive` array length AND failQuietly is
+		 * false.
 		 *
 		 * @param index
 		 * by default, selects randomly.
@@ -160,10 +200,17 @@ export namespace Pronouny {
 		 * @returns a string.
 		 */
 		rfx(
-			index: number = Math.floor(Math.random() * this.reflexive.length)
+			index: number = Math.floor(Math.random() * this.reflexive.length),
+			failQuietly: boolean = true
 		): string {
 			if (index >= this.reflexive.length) {
-				throw new Error("No reflexive pronoun at this index");
+				if (failQuietly) {
+					return this.reflexive[this.reflexive.length - 1];
+				} else {
+					throw new Error(
+						"Index out of range for reflexive pronouns."
+					);
+				}
 			}
 			return this.reflexive[index];
 		}
@@ -236,7 +283,7 @@ export namespace Pronouny {
 	 * A class intended to define pronouns on a person.
 	 */
 	export class PronounSet {
-		pronouns: Array<Pronoun>;
+		pronouns: Set<Pronoun>;
 
 		/**# Pronoun Set Constructor
 		 * Build a set of constructors either from an array of pronoun strings for resolution.
@@ -253,14 +300,22 @@ export namespace Pronouny {
 		 * @param type
 		 * Defines resolution type. `resolvePronoun` is recommended, though `resolvePronounStrict`
 		 * will be faster if the format is well-defined.
+		 *
+		 * @param failQuietly
+		 * If true, will fail silently and return "they" for non-resolvable pronouns. If false, will
+		 * throw an error for non-resolvable pronouns.
+		 *
+		 * @throws if `pronounString` is not in the validator AND `failQuietly` is false.
 		 */
 		constructor(
 			validator: Validate,
 			pronounString: string | Array<string>,
 			delimiter: string = "/",
-			type: "resolvePronoun" | "resolvePronounStrict" = "resolvePronoun"
+			type: "resolvePronoun" | "resolvePronounStrict" = "resolvePronoun",
+			failQuietly: boolean = true
 		) {
 			let splitPronouns = pronounString;
+			this.pronouns = new Set();
 
 			if (!Array.isArray(pronounString)) {
 				splitPronouns = pronounString.split(delimiter);
@@ -270,14 +325,20 @@ export namespace Pronouny {
 				(pronoun) => {
 					const pronounResolved = validator[type](pronoun);
 					if (pronounResolved === undefined) {
-						throw new Error("Failed to resolve pronoun");
+						if (!failQuietly) {
+							throw new Error(
+								`Pronoun "${pronoun}" is not in the validator.`
+							);
+						} else {
+							this.pronouns.add(
+								validator.resolvePronoun("they")!
+							);
+						}
 					} else {
-						return pronounResolved;
+						this.pronouns.add(pronounResolved);
 					}
 				}
 			);
-
-			this.pronouns = returnedPronouns;
 		}
 
 		/**# Pronoun Retrieval
@@ -298,18 +359,79 @@ export namespace Pronouny {
 		 */
 		use(
 			type: "sbj" | "obj" | "psAdj" | "psPrn" | "rfx",
-			pronounIndex: number = Math.floor(
-				Math.random() * this.pronouns.length
-			),
 			index: number | undefined = undefined
 		): string {
-			if (pronounIndex >= this.pronouns.length) {
-				throw new Error("No pronoun set at this index");
-			}
 			if (index === undefined) {
-				return this.pronouns[pronounIndex][type]();
+				return this.get()[type]();
 			}
-			return this.pronouns[pronounIndex][type](index);
+			return this.get()[type](index);
+		}
+
+		/**# Pronoun Getter
+		 * Retrieves a random `Pronoun` from the set.
+		 */
+		get() {
+			if (this.pronouns.size === 1) {
+				return Array.from(this.pronouns)[0];
+			}
+
+			return Array.from(this.pronouns)[
+				Math.floor(Math.random() * this.pronouns.size)
+			];
+		}
+
+		/**# Pronoun Adder
+		 * Add a pronoun to the PronounSet. **This will fail silently unless
+		 * you explicitly opt in to exception handling.**
+		 *
+		 * @throws if `validator` does not resolve given `pronoun`.
+		 */
+		add(
+			pronoun: Pronoun | string,
+			validator: Validate,
+			failQuietly = true
+		) {
+			let resolvedPronoun = pronoun;
+			if (typeof pronoun === "string") {
+				resolvedPronoun = validator.resolvePronoun(pronoun)!;
+
+				if (!resolvedPronoun) {
+					if (failQuietly) {
+						resolvedPronoun = validator.resolvePronoun("they")!;
+					} else {
+						throw new Error("failed to resolve");
+					}
+				}
+			}
+
+			this.pronouns.add(resolvedPronoun as Pronoun);
+		}
+
+		/**# Pronoun Removal
+		 * Removes a given pronoun. **This will fail silently unless
+		 * you explicitly opt in to exception handling.**
+		 *
+		 * @throws if `validator` does not resolve given `pronoun`.
+		 */
+		remove(
+			pronoun: Pronoun | string,
+			validator: Validate,
+			failQuietly = true
+		) {
+			let resolvedPronoun = pronoun;
+			if (typeof pronoun === "string") {
+				resolvedPronoun = validator.resolvePronoun(pronoun)!;
+
+				if (!resolvedPronoun) {
+					if (failQuietly) {
+						resolvedPronoun = validator.resolvePronoun("they")!;
+					} else {
+						throw new Error("failed to resolve");
+					}
+				}
+			}
+
+			this.pronouns.delete(resolvedPronoun as Pronoun);
 		}
 	}
 
@@ -374,7 +496,10 @@ export namespace Pronouny {
 		 *
 		 * @returns a `Pronoun` object or `undefined`.
 		 */
-		resolvePronoun(pronoun: string): Pronoun | undefined {
+		resolvePronoun(
+			pronoun: string,
+			failQuietly = true
+		): Pronoun | undefined {
 			let resolvedPronoun: Pronoun | undefined;
 
 			if (this.pronounsSet.has(pronoun)) {
@@ -393,8 +518,13 @@ export namespace Pronouny {
 						});
 					}
 				});
+
+				if (resolvedPronoun === undefined && !failQuietly) {
+					throw new Error(`Failed to resolve pronoun ${pronoun}`);
+				}
+
+				return resolvedPronoun ?? this.resolvePronoun("they");
 			}
-			return resolvedPronoun;
 		}
 
 		/**# Strict Pronoun Resolver

@@ -52,3 +52,22 @@ console.log(
 // updated hir status", or "vaynegarden updated their status",
 // selected randomly among the three.
 ```
+
+## Changelog
+
+### v.0.2.0
+
+-   now fails silently when trying to resolve pronouns that don't exist or indexing out of bounds.
+-   implementation of `PronounSet` class changed to Set from Array to prevent duplicate pronouns.
+-   added `get()` method to `PronounSet` class to retrieve a random Pronoun object.
+-   added `add()` and `remove()` on `PronounSet`
+
+## TODO
+
+[ ] Full rewrite
+
+-   [ ] Consolidate implementation into one general-use class.
+-   [ ] Add global configuration for pronoun use.
+-   [ ] Implement template literal use.
+-   [ ] Cleaner error handling.
+-   [ ] Use more performant data structures.
