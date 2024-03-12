@@ -513,11 +513,11 @@ const pronounWe: Pronoun = new Pronoun({
 
 /**# Config
  * `failQuietly`: Controls various quiet failure states.
- * 
+ *
  * `deepSearch`: Controls how deeply Pronouny will search
  * for queries. By default, `string` parameters will
  * only resolve using the first subject pronoun.
- * 
+ *
  * `useRandom`: Controls whether random selection will be
  * used. If false, it will default to 0. If failing
  * quietly and indexing out of bounds, it will use the
@@ -549,20 +549,20 @@ const PronounyDefaultConfig: PronounyConfig = {
  * resolution easy. Instantiate in your project using
  * `new Pronouny()`, optionally passing in a
  * {@link PronounyConfig|`PronounyConfig` object}.
- * 
+ *
  * Once you have configured Pronouny, you may add new
  * pronouns by using `new()` and passing in a set of
  * pronouns. They are registered automatically. If you
  * would like to register them manually, you can use
  * `add()`. You can also `remove()` them if you would
  * like to make them no longer valid.
- * 
+ *
  * You can produce a {@linkcode PronounSet} by using
  * `set()`. By passing in a string, it will
  * automatically resolve each, using a delimiter if
  * specified. From there, you can chain methods like
  * `subject()` to retrieve a subject pronoun for use.
- * 
+ *
  * If you would like to get a {@link Pronoun|`Pronoun` object}
  * from a given text, you can use `resolve()`. Pass
  * in a string and it will return the entire matched
@@ -663,7 +663,7 @@ export default class Pronouny {
 	 * Will automatically add the new Pronoun to the
 	 * Pronouny instance. If false, will just return a
 	 * {@link Pronoun|`Pronoun` object} without registering.
-	 * You may register it later with {@link Pronouny.add}. 
+	 * You may register it later with {@link Pronouny.add}.
 	 */
 	new(
 		pronouns: {
