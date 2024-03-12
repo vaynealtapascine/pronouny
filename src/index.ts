@@ -1,601 +1,358 @@
-/**# Pronouny
- * A TypeScript library for pronoun validation and resolution.
- */
-export namespace Pronouny {
-	/**# Pronoun Class
-	 * In order to construct a new `Pronoun`, you will need to pass in an
-	 * object which contains at least one `subject` pronoun, one `object`
-	 * pronoun, one `possessiveAdjective`, one `possessivePronoun`, and one
-	 * `reflexive` pronoun. You may pass in a string (which will be
-	 * automatically placed into an array of one) or an array.
-	 *
-	 * methods:
-	 * * `new`: takes in an object containing the required pronouns.
-	 * * `sbj`: returns subject pronouns. (e.g., he, she, they)
-	 * * `obj`: returns object pronouns. (e.g., him, her, them)
-	 * * `psAdj`: returns possessive adjectives (e.g., his, her, their)
-	 * * `psPrn`: returns possessive pronouns (e.g., his, hers, theirs)
-	 * * `rfx`: returns reflexive pronouns (e.g., himself, herself, themself)
-	 */
-	export class Pronoun {
-		subject: Array<string>;
-		object: Array<string>;
-		possessiveAdjective: Array<string>;
-		possessivePronoun: Array<string>;
-		reflexive: Array<string>;
+function randomToLimit(limit: number) {
+	return Math.floor(Math.random() * limit);
+}
 
-		/** # Pronoun Constructor
-		 * In order to construct a new `Pronoun`, you will need to pass in an
-		 * object which contains at least one `subject` pronoun, one `object`
-		 * pronoun, one `possessiveAdjective`, one `possessivePronoun`, and one
-		 * `reflexive` pronoun. You may pass in a string (which will be
-		 * automatically placed into an array of one) or an array.
-		 *
-		 * @param pronouns
-		 */
-		constructor(pronouns: {
-			subject: Array<string> | string;
-			object: Array<string> | string;
-			possessiveAdjective: Array<string> | string;
-			possessivePronoun: Array<string> | string;
-			reflexive: Array<string> | string;
-		}) {
-			this.subject = [];
-			this.object = [];
-			this.possessiveAdjective = [];
-			this.possessivePronoun = [];
-			this.reflexive = [];
+class Pronoun {
+	sbj: Array<string>;
+	obj: Array<string>;
+	psv: Array<string>;
+	psj: Array<string>;
+	rfx: Array<string>;
 
-			typeof pronouns.subject === "string"
-				? (this.subject[0] = pronouns.subject)
-				: (this.subject = pronouns.subject);
-			typeof pronouns.object === "string"
-				? (this.subject[0] = pronouns.object)
-				: (this.object = pronouns.object);
-			typeof pronouns.possessiveAdjective === "string"
-				? (this.subject[0] = pronouns.possessiveAdjective)
-				: (this.possessiveAdjective = pronouns.possessiveAdjective);
-			typeof pronouns.possessivePronoun === "string"
-				? (this.subject[0] = pronouns.possessivePronoun)
-				: (this.possessivePronoun = pronouns.possessivePronoun);
-			typeof pronouns.reflexive === "string"
-				? (this.subject[0] = pronouns.reflexive)
-				: (this.reflexive = pronouns.reflexive);
+	constructor(pronouns: {
+		subject: Array<string> | string,
+		object: Array<string> | string,
+		possessive: Array<string> | string,
+		psAdjective: Array<string> | string,
+		reflexive: Array<string> | string
+	}) {
+		this.sbj = typeof pronouns.subject === 'string' ? [pronouns.subject] : pronouns.subject;
+		this.obj = typeof pronouns.object === 'string' ? [pronouns.object] : pronouns.object;
+		this.psv = typeof pronouns.possessive === 'string' ? [pronouns.possessive] : pronouns.possessive;
+		this.psj = typeof pronouns.psAdjective === 'string' ? [pronouns.psAdjective] : pronouns.psAdjective;
+		this.rfx = typeof pronouns.reflexive === 'string' ? [pronouns.reflexive] : pronouns.reflexive;
+	}
+
+	subject(index = -1, failQuietly = true, useRandom = true) {
+		switch (true) {
+			case index === -1 && useRandom:
+			case index > this.sbj.length && useRandom:
+				return this.sbj[randomToLimit(this.sbj.length)]
+			case index <= this.sbj.length:
+				return this.sbj[index]
+			case failQuietly:
+				return this.sbj[0]
+			default:
+				throw new Error(`could not retrieve index ${index} from "${this.sbj[0]}" subject pronoun`);
 		}
-
-		/**## Subject Getter
-		 * Retrieves an subject pronoun. If no index is provided, it will retrieve a
-		 * random one from the array *(recommended)*. **This will fail silently and
-		 * return the last pronoun instead if you submit if an invalid index. You
-		 * must opt in to exception handling.**
-		 *
-		 * @throws if you index out of `subject` array length AND failQuietly is false.
-		 *
-		 * @param index
-		 * by default, selects randomly.
-		 *
-		 * @returns a string.
-		 */
-		sbj(
-			index: number = Math.floor(Math.random() * this.subject.length),
-			failQuietly: boolean = true
-		): string {
-			if (index >= this.subject.length) {
-				if (failQuietly) {
-					return this.subject[this.subject.length - 1];
-				} else {
-					throw new Error("Index out of range for object pronouns.");
-				}
-			}
-			return this.subject[index];
-		}
-
-		/**## Object Getter
-		 * Retrieves an object pronoun. If no index is provided, it will retrieve a
-		 * random one from the array *(recommended)*. **This will fail silently and
-		 * return the last pronoun instead if you submit if an invalid index. You
-		 * must opt in to exception handling.**
-		 *
-		 * @throws if you index out of `object` array length AND failQuietly is false.
-		 *
-		 * @param index
-		 * by default, selects randomly.
-		 *
-		 * @returns a string.
-		 */
-		obj(
-			index: number = Math.floor(Math.random() * this.object.length),
-			failQuietly: boolean = true
-		): string {
-			if (index >= this.object.length) {
-				if (failQuietly) {
-					return this.object[this.object.length - 1];
-				} else {
-					throw new Error("Index out of range for object pronouns.");
-				}
-			}
-			return this.object[index];
-		}
-
-		/**## Possessive Adjective Getter
-		 * Retrieves a possessive adjective pronoun. If no index is provided, it will
-		 * retrieve a random one from the array *(recommended)*. **This will fail
-		 * silently and return the last pronoun instead if you submit if an invalid
-		 * index. You must opt in to exception handling.**
-		 *
-		 * @throws if you index out of `possessiveAdjective` array length AND
-		 * failQuietly is false.
-		 *
-		 * @param index
-		 * by default, selects randomly.
-		 *
-		 * @returns a string.
-		 */
-		psAdj(
-			index: number = Math.floor(
-				Math.random() * this.possessiveAdjective.length
-			),
-			failQuietly: boolean = true
-		): string {
-			if (index >= this.possessiveAdjective.length) {
-				if (failQuietly) {
-					return this.possessiveAdjective[
-						this.possessiveAdjective.length - 1
-					];
-				} else {
-					throw new Error(
-						"Index out of range for possessive adjective pronouns."
-					);
-				}
-			}
-			return this.possessiveAdjective[index];
-		}
-
-		/**## Possessive Pronoun Getter
-		 * Retrieves a possessive pronoun. If no index is provided, it will retrieve
-		 * a random one from the array *(recommended)*. **This will fail silently
-		 * and return the last pronoun instead if you submit if an invalid index.
-		 * You must opt in to exception handling.**
-		 *
-		 * @throws if you index out of `possessivePronoun` array length AND
-		 * failQuietly is false.
-		 *
-		 * @param index
-		 * by default, selects randomly.
-		 *
-		 * @returns a string.
-		 */
-		psPrn(
-			index: number = Math.floor(
-				Math.random() * this.possessivePronoun.length
-			),
-			failQuietly: boolean = true
-		): string {
-			if (index >= this.possessivePronoun.length) {
-				if (failQuietly) {
-					return this.possessivePronoun[
-						this.possessivePronoun.length - 1
-					];
-				} else {
-					throw new Error(
-						"Index out of range for possessive pronouns."
-					);
-				}
-			}
-			return this.possessivePronoun[index];
-		}
-
-		/**## Reflexive Pronoun Getter
-		 * Retrieves a reflexive pronoun. If no index is provided, it will retrieve
-		 * a random one from the array *(recommended)*. **This will fail silently
-		 * and return the last pronoun instead if you submit if an invalid index.
-		 * You must opt in to exception handling.**
-		 *
-		 * @throws if you index out of `reflexive` array length AND failQuietly is
-		 * false.
-		 *
-		 * @param index
-		 * by default, selects randomly.
-		 *
-		 * @returns a string.
-		 */
-		rfx(
-			index: number = Math.floor(Math.random() * this.reflexive.length),
-			failQuietly: boolean = true
-		): string {
-			if (index >= this.reflexive.length) {
-				if (failQuietly) {
-					return this.reflexive[this.reflexive.length - 1];
-				} else {
-					throw new Error(
-						"Index out of range for reflexive pronouns."
-					);
-				}
-			}
-			return this.reflexive[index];
-		}
-
-		/**# Pronoun Extension
-		 * Extend the set of Pronouns with new pronouns. You may pass in a
-		 * string or an array of strings.
-		 *
-		 * @param pronounType
-		 * Denotes which type of pronoun to extend. Can be `subject`, `object`,
-		 * `possessiveAdjective`, `possessivePronoun`, or `reflexive`.
-		 *
-		 * @param extensions
-		 * A string or array of strings to extend the pronoun set with.
-		 */
-		extend(
-			pronounType:
-				| "subject"
-				| "object"
-				| "possessiveAdjective"
-				| "possessivePronoun"
-				| "reflexive",
-			extensions: string | Array<string>
-		) {
-			if (Array.isArray(extensions)) {
-				extensions.forEach((extension) => {
-					this[pronounType].push(extension);
-				});
-			} else {
-				this[pronounType].push(extensions);
-			}
-		}
-
-		/**# Pronoun Removal
-		 * Remove a pronoun from the set. You may pass in a string or
-		 * an array of strings.
-		 *
-		 * @param pronounType
-		 * Pronoun type to remove from. Can be `subject`, `object`,
-		 * `possessiveAdjective`, `possessivePronoun`, or `reflexive`.
-		 *
-		 * @param removal
-		 * Pronoun to remove from array. Can be a string or an array
-		 * of strings.
-		 */
-		remove(
-			pronounType:
-				| "subject"
-				| "object"
-				| "possessiveAdjective"
-				| "possessivePronoun"
-				| "reflexive",
-			removal: string | Array<string>
-		) {
-			if (Array.isArray(removal)) {
-				removal.forEach((remove) => {
-					this[pronounType] = this[pronounType].filter(
-						(pronoun) => pronoun !== remove
-					);
-				});
-			} else {
-				this[pronounType] = this[pronounType].filter(
-					(pronoun) => pronoun !== removal
-				);
-			}
+	}
+	
+	object(index = -1, failQuietly = true, useRandom = true) {
+		let result;
+		switch (true) {
+			case index === -1 && useRandom:
+			case index > this.obj.length && useRandom:
+				return this.obj[randomToLimit(this.obj.length)]
+			case index <= this.obj.length:
+				return this.obj[index]
+			case failQuietly:
+				return this.obj[0]
+			default:
+				throw new Error(`could not retrieve index ${index} from "${this.sbj[0]}" object pronoun`);
 		}
 	}
 
-	/**# Pronoun Sets
-	 * A class intended to define pronouns on a person.
-	 */
-	export class PronounSet {
-		pronouns: Set<Pronoun>;
+	possessive(index = -1, failQuietly = true, useRandom = true) {
+		switch (true) {
+			case index === -1 && useRandom:
+			case index > this.psv.length && useRandom:
+				return this.psv[randomToLimit(this.psv.length)]
+			case index <= this.psv.length:
+				return this.psv[index]
+			case failQuietly:
+				return this.psv[0]
+			default:
+				throw new Error(`could not retrieve index ${index} from "${this.sbj[0]}" possessive pronoun`);
+		}
+	}
 
-		/**# Pronoun Set Constructor
-		 * Build a set of constructors either from an array of pronoun strings for resolution.
-		 *
-		 * @param validator
-		 * Requires a `Pronouny.Validate` object to define valid pronouns for `PronounSet` construction.
-		 *
-		 * @param pronounString
-		 * A string or array of strings for resolution. (e.g., "he/they", "she", "ze/faer")
-		 *
-		 * @param delimiter
-		 * Defines the delimiter for string `pronounString`s.
-		 *
-		 * @param type
-		 * Defines resolution type. `resolvePronoun` is recommended, though `resolvePronounStrict`
-		 * will be faster if the format is well-defined.
-		 *
-		 * @param failQuietly
-		 * If true, will fail silently and return "they" for non-resolvable pronouns. If false, will
-		 * throw an error for non-resolvable pronouns.
-		 *
-		 * @throws if `pronounString` is not in the validator AND `failQuietly` is false.
-		 */
-		constructor(
-			validator: Validate,
-			pronounString: string | Array<string>,
-			delimiter: string = "/",
-			type: "resolvePronoun" | "resolvePronounStrict" = "resolvePronoun",
-			failQuietly: boolean = true
-		) {
-			let splitPronouns = pronounString;
-			this.pronouns = new Set();
+	psAdjective(index = -1, failQuietly = true, useRandom = true) {
+		switch (true) {
+			case index === -1 && useRandom:
+			case index > this.psj.length && useRandom:
+				return this.psj[randomToLimit(this.psj.length)]
+			case index <= this.psj.length:
+				return this.psj[index]
+			case failQuietly:
+				return this.psj[0]
+			default:
+				throw new Error(`could not retrieve index ${index} from "${this.sbj[0]}" possessive adjective pronoun`);
+		}
+	}
 
-			if (!Array.isArray(pronounString)) {
-				splitPronouns = pronounString.split(delimiter);
-			}
+	reflexive(index = -1, failQuietly = true, useRandom = true) {
+		switch (true) {
+			case index === -1 && useRandom:
+			case index > this.rfx.length && useRandom:
+				return this.rfx[randomToLimit(this.rfx.length)]
+			case index <= this.rfx.length:
+				return this.rfx[index]
+			case failQuietly:
+				return this.rfx[0]
+			default:
+				throw new Error(`could not retrieve index ${index} from "${this.sbj[0]}" reflexive pronoun`);
+		}
+	}
+}
+type PronounForms = keyof Pronoun;
 
-			const returnedPronouns = (splitPronouns as Array<string>).map(
-				(pronoun) => {
-					const pronounResolved = validator[type](pronoun);
-					if (pronounResolved === undefined) {
-						if (!failQuietly) {
-							throw new Error(
-								`Pronoun "${pronoun}" is not in the validator.`
-							);
-						} else {
-							this.pronouns.add(
-								validator.resolvePronoun("they")!
-							);
+class PronounSet {
+	pronouns: Set<Pronoun>;
+	resolver: Pronouny;
+
+	constructor(
+		resolver: Pronouny,
+		pronouns:
+			| Set<Pronoun>
+			| Array<Pronoun>
+			| Set<string>
+			| Array<string>
+			| string = ["they"]
+	) {
+		this.pronouns = new Set();
+		this.resolver = resolver;
+		switch (true) {
+			case Array.isArray(pronouns):
+				pronouns.forEach((x) => {
+					if (x instanceof Pronoun) {
+						this.pronouns.add(x);
+					} else {
+						this.pronouns.add(resolver.resolve(x));
+					}
+				});
+				break;
+			case typeof pronouns === "string":
+				this.pronouns.add(resolver.resolve(pronouns));
+				break;
+			default:
+				pronouns.forEach((x) => {
+					if (x instanceof Pronoun) {
+						this.pronouns.add(x);
+					} else {
+						this.pronouns.add(resolver.resolve(x));
+					}
+				});
+				break;
+		}
+	}
+
+	add(
+		pronoun: string | Pronoun | Array<string> | Array<Pronoun>,
+		failQuietly = this.resolver.config.failQuietly
+	) {
+		switch (true) {
+			case pronoun instanceof Pronoun:
+				this.pronouns.add(pronoun);
+				break;
+			case typeof pronoun === "string":
+				this.pronouns.add(this.resolver.resolve(pronoun));
+				break;
+			case pronoun instanceof Array:
+				pronoun.forEach((p) => {
+					this.add(p);
+				});
+				break;
+			case failQuietly:
+				this.pronouns.add(this.resolver.resolve("they"));
+				break;
+			case !failQuietly:
+			default:
+				throw new Error(`Unable to resolve ${pronoun}`);
+		}
+		return this;
+	}
+
+	remove(
+		set: PronounSet,
+		pronoun: string | Pronoun | Array<string> | Array<Pronoun>,
+		failQuietly = this.resolver.config.failQuietly
+	) {
+		switch (true) {
+			case pronoun instanceof Pronoun:
+				set.pronouns.delete(pronoun);
+				break;
+			case typeof pronoun === "string":
+				set.pronouns.delete(this.resolver.resolve(pronoun));
+				break;
+			case pronoun instanceof Array:
+				pronoun.forEach((p) => {
+					this.remove(set, p);
+				});
+				break;
+			case failQuietly:
+				break;
+			case !failQuietly:
+			default:
+				throw new Error(`Unable to resolve ${pronoun}`);
+		}
+		return this;
+	}
+
+	use(index = -1, failQuietly = this.resolver.config.failQuietly, useRandom = this.resolver.config.useRandom): Pronoun {
+		const indexable = Array.from(this.pronouns);
+		switch (true) {
+			case indexable.length === 0:
+				if (failQuietly) {
+					return this.resolver.resolve("they");
+				}
+				throw new Error("Pronoun set is empty");
+			case index === -1:
+				if (useRandom) {
+					return indexable[randomToLimit(indexable.length)];
+				}
+				return indexable[0];
+			case indexable[index] !== undefined:
+				return indexable[index];
+			case failQuietly:
+				return this.resolver.resolve("they");
+			default:
+				throw new Error(`Index ${index} out of range`);
+		}
+	}
+
+	subject(index = -1, failQuietly = this.resolver.config.failQuietly, useRandom = this.resolver.config.useRandom) {
+		return this.use(index, failQuietly, useRandom).subject(-1, failQuietly, useRandom);
+	}
+
+	object(index = -1, failQuietly = this.resolver.config.failQuietly, useRandom = this.resolver.config.useRandom) {
+		return this.use(index, failQuietly, useRandom).object(-1, failQuietly, useRandom);
+	}
+
+	possessive(index = -1, failQuietly = this.resolver.config.failQuietly, useRandom = this.resolver.config.useRandom) {
+		return this.use(index, failQuietly, useRandom).possessive(-1, failQuietly, useRandom);
+	}
+
+	psAdjective(index = -1, failQuietly = this.resolver.config.failQuietly, useRandom = this.resolver.config.useRandom) {
+		return this.use(index, failQuietly, useRandom).psAdjective(-1, failQuietly, useRandom);
+	}
+
+	reflexive(index = -1, failQuietly = this.resolver.config.failQuietly, useRandom = this.resolver.config.useRandom) {
+		return this.use(index, failQuietly, useRandom).reflexive(-1, failQuietly, useRandom);
+	}
+}
+
+const pronounHe: Pronoun = new Pronoun ({
+	subject: ["he"],
+	object: ["him"],
+	possessive: ["his"],
+	psAdjective: ["his"],
+	reflexive: ["himself"],
+});
+const pronounShe: Pronoun = new Pronoun ({
+	subject: ["she"],
+	object: ["her"],
+	possessive: ["hers"],
+	psAdjective: ["her"],
+	reflexive: ["herself"],
+});
+const pronounThey: Pronoun = new Pronoun ({
+	subject: ["they"],
+	object: ["them"],
+	possessive: ["theirs"],
+	psAdjective: ["their"],
+	reflexive: ["theirself", "theirselves", "themselves", "themself"],
+});
+const pronounYou: Pronoun = new Pronoun ({
+	subject: ["you"],
+	object: ["you"],
+	possessive: ["yours"],
+	psAdjective: ["your"],
+	reflexive: ["yourself"],
+});
+const pronounI: Pronoun = new Pronoun ({
+	subject: ["I"],
+	object: ["me"],
+	possessive: ["mine"],
+	psAdjective: ["my"],
+	reflexive: ["myself"],
+});
+const pronounWe: Pronoun = new Pronoun ({
+	subject: ["we"],
+	object: ["us"],
+	possessive: ["our"],
+	psAdjective: ["ours"],
+	reflexive: ["ourselves"],
+});
+
+type PronounyConfig = {
+	failQuietly?: boolean;
+	deepSearch?: boolean;
+	useRandom?: boolean;
+};
+const PronounyDefaultConfig: PronounyConfig = {
+	failQuietly: true,
+	deepSearch: false,
+	useRandom: true,
+};
+
+export default class Pronouny {
+	config: PronounyConfig;
+	resolveMap: Map<string, Pronoun>;
+
+	constructor(config: PronounyConfig = PronounyDefaultConfig) {
+		this.config = Object.assign(PronounyDefaultConfig, config);
+		this.resolveMap = new Map<string, Pronoun>([
+			[pronounThey.sbj[0], pronounThey],
+			[pronounYou.sbj[0], pronounYou],
+			[pronounWe.sbj[0], pronounWe],
+			[pronounI.sbj[0], pronounI],
+			[pronounHe.sbj[0], pronounHe],
+			[pronounShe.sbj[0], pronounShe],
+		]);
+	}
+
+	resolve(pronoun: string, deepSearch = this.config.deepSearch): Pronoun {
+		const resolvedPronoun = this.resolveMap.get(pronoun);
+		switch (true) {
+			case resolvedPronoun !== undefined:
+				return resolvedPronoun;
+			case deepSearch:
+				let searchResult;
+				this.resolveMap.forEach((mapPronoun) => {
+					Object.values(mapPronoun).forEach((type) => {
+						if (type.includes(pronoun)) {
+							searchResult = mapPronoun;
 						}
-					} else {
-						this.pronouns.add(pronounResolved);
-					}
+					});
+				});
+				if (searchResult) {
+					return searchResult;
 				}
-			);
-		}
-
-		/**# Pronoun Retrieval
-		 * Retrieves a pronoun from the given set.
-		 *
-		 * @param type
-		 * Specifies the pronoun desired. Uses the same syntax as {@link Pronoun}'s getters.
-		 * Use `sbj` for Subject, `obj` for Object, `psAdj` for Possessive Adjective, `psPrn`
-		 * for Possessive Pronoun, and `rfx` for Reflexive.
-		 *
-		 * @param pronounIndex
-		 * Specifies the index in the `PronounSet`. Defaults to a random one *(recommended)*.
-		 *
-		 * @param index
-		 * Specifies the index in the `Pronoun`. Defaults to a random one *(recommended)*.
-		 *
-		 * @returns a string.
-		 */
-		use(
-			type: "sbj" | "obj" | "psAdj" | "psPrn" | "rfx",
-			index: number | undefined = undefined
-		): string {
-			if (index === undefined) {
-				return this.get()[type]();
-			}
-			return this.get()[type](index);
-		}
-
-		/**# Pronoun Getter
-		 * Retrieves a random `Pronoun` from the set.
-		 */
-		get() {
-			if (this.pronouns.size === 1) {
-				return Array.from(this.pronouns)[0];
-			}
-
-			return Array.from(this.pronouns)[
-				Math.floor(Math.random() * this.pronouns.size)
-			];
-		}
-
-		/**# Pronoun Adder
-		 * Add a pronoun to the PronounSet. **This will fail silently unless
-		 * you explicitly opt in to exception handling.**
-		 *
-		 * @throws if `validator` does not resolve given `pronoun`.
-		 */
-		add(
-			pronoun: Pronoun | string,
-			validator: Validate,
-			failQuietly = true
-		) {
-			let resolvedPronoun = pronoun;
-			if (typeof pronoun === "string") {
-				resolvedPronoun = validator.resolvePronoun(pronoun)!;
-
-				if (!resolvedPronoun) {
-					if (failQuietly) {
-						resolvedPronoun = validator.resolvePronoun("they")!;
-					} else {
-						throw new Error("failed to resolve");
-					}
-				}
-			}
-
-			this.pronouns.add(resolvedPronoun as Pronoun);
-		}
-
-		/**# Pronoun Removal
-		 * Removes a given pronoun. **This will fail silently unless
-		 * you explicitly opt in to exception handling.**
-		 *
-		 * @throws if `validator` does not resolve given `pronoun`.
-		 */
-		remove(
-			pronoun: Pronoun | string,
-			validator: Validate,
-			failQuietly = true
-		) {
-			let resolvedPronoun = pronoun;
-			if (typeof pronoun === "string") {
-				resolvedPronoun = validator.resolvePronoun(pronoun)!;
-
-				if (!resolvedPronoun) {
-					if (failQuietly) {
-						resolvedPronoun = validator.resolvePronoun("they")!;
-					} else {
-						throw new Error("failed to resolve");
-					}
-				}
-			}
-
-			this.pronouns.delete(resolvedPronoun as Pronoun);
+			case this.config.failQuietly:
+				return this.resolveMap.get("they")!;
+			default:
+				throw new Error(`Pronoun "${pronoun}" not found`);
 		}
 	}
 
-	/**# Validator Class
-	 * Validates and checks if the pronoun specified is valid. You may extend or
-	 * remove Pronouns specified using the `extend()` or `remove()` methods.
-	 */
-	export class Validate {
-		pronounsSet: Map<string, Pronoun>;
+	add(pronoun: Pronoun): void {
+		this.resolveMap.set(pronoun.sbj[0], pronoun);
+	}
 
-		/**# Validator Constructor
-		 * Simply use `new Pronouny.Validate()` to create a new instance. It will
-		 * be automatically populated with he, she, and they pronouns. Extend or
-		 * otherwise modify it using `extend()` or `remove()`.
-		 */
-		constructor() {
-			this.pronounsSet = new Map([
-				[
-					"he",
-					new Pronoun({
-						subject: ["he"],
-						object: ["him"],
-						possessiveAdjective: ["his"],
-						possessivePronoun: ["his"],
-						reflexive: ["himself"],
-					}),
-				],
-				[
-					"she",
-					new Pronoun({
-						subject: ["she"],
-						object: ["her"],
-						possessiveAdjective: ["her"],
-						possessivePronoun: ["hers"],
-						reflexive: ["herself"],
-					}),
-				],
-				[
-					"they",
-					new Pronoun({
-						subject: ["they"],
-						object: ["them"],
-						possessiveAdjective: ["their"],
-						possessivePronoun: ["theirs"],
-						reflexive: [
-							"themself",
-							"themselves",
-							"theirself",
-							"theirselves",
-						],
-					}),
-				],
-			]);
+	remove(pronoun: Pronoun): void {
+		this.resolveMap.delete(pronoun.sbj[0]);
+	}
+
+	set(
+		pronouns: string | Array<string>,
+		delimiter: string = "/"
+	): PronounSet {
+		if (typeof pronouns === 'string' && delimiter !== undefined) {
+			pronouns = pronouns.split(delimiter);
 		}
+		let result: PronounSet = new PronounSet(this, pronouns);
+		return result;
+	}
 
-		/**# Pronoun Resolver
-		 * Returns the Pronoun object for the given pronoun string. Will
-		 * return `undefined` if the pronoun is not found.
-		 *
-		 * @param pronoun
-		 * String to check for against `pronounsSet`.
-		 *
-		 * @returns a `Pronoun` object or `undefined`.
-		 */
-		resolvePronoun(
-			pronoun: string,
-			failQuietly = true
-		): Pronoun | undefined {
-			let resolvedPronoun: Pronoun | undefined;
-
-			if (this.pronounsSet.has(pronoun)) {
-				resolvedPronoun = this.pronounsSet.get(pronoun);
-			} else {
-				this.pronounsSet.forEach((pronounSet, pronounLead) => {
-					if (pronoun === pronounLead) {
-						resolvedPronoun = pronounSet;
-					} else {
-						Object.values(pronounSet).forEach((subtype) => {
-							subtype.forEach((subtypeVariant: string) => {
-								if (subtypeVariant === pronoun) {
-									resolvedPronoun = pronounSet;
-								}
-							});
-						});
-					}
-				});
-
-				if (resolvedPronoun === undefined && !failQuietly) {
-					throw new Error(`Failed to resolve pronoun ${pronoun}`);
-				}
-
-				return resolvedPronoun ?? this.resolvePronoun("they");
-			}
-		}
-
-		/**# Strict Pronoun Resolver
-		 * Only checks the string against the `strictIdentifier` (usually
-		 * the first subject pronoun). Returns the Pronoun object for the
-		 * given pronoun string. Will return `undefined` if the pronoun is
-		 * not found.
-		 *
-		 * @param pronoun
-		 * String to check for against `pronounsSet`.
-		 *
-		 * @returns a `Pronoun` object or `undefined`.
-		 */
-		resolvePronounStrict(pronoun: string): Pronoun | undefined {
-			return this.pronounsSet.get(pronoun);
-		}
-
-		/**# Pronoun Set Constructor
-		 * Convenience method to build a `PronounSet` from a string or array of
-		 * strings. You may specify a delimiter and resolution type.
-		 *
-		 * @param pronounString
-		 * `string` or `Array<string>` to build the `PronounSet` from.
-		 *
-		 * @param delimiter
-		 * delimiter to split the `pronounString` by.
-		 *
-		 * @param type
-		 * determines the resolution type. `resolvePronoun` is recommended, though
-		 * `resolvePronounStrict` will be faster if the format is well-defined.
-		 *
-		 * @returns a PronounSet.
-		 */
-		createSetFrom(
-			pronounString: string | Array<string>,
-			delimiter: string = "/",
-			type: "resolvePronoun" | "resolvePronounStrict" = "resolvePronoun"
-		): PronounSet {
-			return new PronounSet(this, pronounString, delimiter, type);
-		}
-
-		/**# Pronoun Extension
-		 * Extend the set of Pronouns with new pronouns. You may pass in a
-		 * string or an array of strings.
-		 *
-		 * @param strictIdentifier
-		 * The strict identifier for the pronoun set. Usually the first subject pronoun.
-		 *
-		 * @param pronoun
-		 * A `Pronoun` object to extend the set with.
-		 *
-		 * @returns a `Pronoun` object.
-		 */
-		extend(strictIdentifier: string, pronoun: Pronoun) {
-			this.pronounsSet.set(strictIdentifier, pronoun);
-		}
-
-		/**# Pronoun Removal
-		 * Remove a `Pronoun` from the `pronounsSet` map. You may pass in a
-		 * string or an array of strings.
-		 *
-		 * @param strictIdentifier
-		 * The strict identifier for the pronoun set. Usually the first subject pronoun.
-		 *
-		 * @param pronoun
-		 * A `Pronoun` object to extend the set with.
-		 *
-		 * @returns a `Pronoun` object.
-		 */
-		remove(strictIdentifier: string, pronoun: Pronoun) {
-			this.pronounsSet.delete(strictIdentifier);
-		}
+	new(pronouns: {
+		subject: Array<string> | string,
+		object: Array<string> | string,
+		possessive: Array<string> | string,
+		psAdjective: Array<string> | string,
+		reflexive: Array<string> | string
+	}, autoAppend = true) {
+		const newPronoun = new Pronoun(pronouns);
+		this.add(newPronoun);
+		return newPronoun
 	}
 }

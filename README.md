@@ -21,32 +21,35 @@ This class is intended to verify and retrieve correct pronouns. It is centered a
 ## Example
 
 ```ts
-import { Pronouny } from "pronouny";
+// Single import
+import Pronouny from 'pronouny';
 
 // Create a new instance of the Validate class
-const pronounValidator = new Pronouny.Validate();
+const p = new Pronouny({
+	failQuietly: false
+});
 
 // Create a new Pronoun object for ze/hir pronouns
-const pronounZe = new Pronouny.Pronoun({
+const pronounZe = p.new({
 	subject: "ze",
 	object: "hir",
-	possessiveAdjective: "hir",
-	possessivePronoun: "hirs",
+	possessive: "hirs",
+	psAdjective: "hir",
 	reflexive: "hirself",
 });
 
 // Add the pronoun to the pronounSet map
-pronounValidator.extend("ze", pronounZe);
+p.add(pronounZe);
 
 // Set someone's pronouns.
 const vayne = {
-	username: vaynegarden,
-	pronouns: pronounValidator.createSetFrom("she/ze/they"),
+	username: "vaynegarden",
+	pronouns: p.set("she/ze/they"),
 };
 
 // Resolve the pronouns in your app
 console.log(
-	vayne.username + " updated " + vayne.pronouns.use("psAdj") + " status."
+	vayne.username + " updated " + vayne.pronouns.psAdjective() + " status."
 );
 // Returns "vaynegarden updated her status", "vaynegarden
 // updated hir status", or "vaynegarden updated their status",
@@ -66,8 +69,8 @@ console.log(
 
 [ ] Full rewrite
 
--   [ ] Consolidate implementation into one general-use class.
--   [ ] Add global configuration for pronoun use.
+-   [x] Consolidate implementation into one general-use class.
+-   [x] Add global configuration for pronoun use.
 -   [ ] Implement template literal use.
 -   [ ] Cleaner error handling.
 -   [ ] Use more performant data structures.
