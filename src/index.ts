@@ -2,6 +2,13 @@ function randomToLimit(limit: number) {
 	return Math.floor(Math.random() * limit);
 }
 
+/**# `Pronoun` class
+ * A private class to construct the methods for pronoun
+ * access. Use {@link Pronouny} to create and
+ * append pronouns to the main validator. You can directly
+ * fetch pronoun arrays with `sbj`, `obj`, `psv`, `psj`,
+ * and `rfx`.
+ */
 class Pronoun {
 	sbj: Array<string>;
 	obj: Array<string>;
@@ -9,6 +16,7 @@ class Pronoun {
 	psj: Array<string>;
 	rfx: Array<string>;
 
+	/** @constructor */
 	constructor(pronouns: {
 		subject: Array<string> | string;
 		object: Array<string> | string;
@@ -39,12 +47,30 @@ class Pronoun {
 		return this;
 	}
 
-	subject(index = -1, failQuietly = true, useRandom = true) {
+	/**# Subject Getter
+	 * Get a subject pronoun. By default, uses one at
+	 * random and fails silently by using the last
+	 * pronoun if you index out of bounds.
+	 *
+	 * @param index
+	 * Get `index`th pronoun, if specified. Fails to
+	 * last if out of bounds and failing quietly.
+	 * Default is `-1`.
+	 *
+	 * @param useRandom
+	 * Overrides default random use behavior.
+	 * Default is `true`.
+	 *
+	 * @param failQuietly
+	 * Overrides default quiet failure behavior.
+	 * Default is `true`.
+	 */
+	subject(index = -1, useRandom = true, failQuietly = true) {
 		switch (true) {
 			case this.sbj.length === 1:
 				return this.sbj[0];
 			case index === -1 && useRandom:
-			case index > this.sbj.length && useRandom:
+			case index > this.sbj.length && useRandom && failQuietly:
 				return this.sbj[randomToLimit(this.sbj.length)];
 			case index <= this.sbj.length:
 				return this.sbj[index];
@@ -57,7 +83,25 @@ class Pronoun {
 		}
 	}
 
-	object(index = -1, failQuietly = true, useRandom = true) {
+	/**# Object Getter
+	 * Get an object pronoun. By default, uses one at
+	 * random and fails silently by using the last
+	 * pronoun if you index out of bounds.
+	 *
+	 * @param index
+	 * Get `index`th pronoun, if specified. Fails to
+	 * last if out of bounds and failing quietly.
+	 * Default is `-1`.
+	 *
+	 * @param useRandom
+	 * Overrides default random use behavior.
+	 * Default is `true`.
+	 *
+	 * @param failQuietly
+	 * Overrides default quiet failure behavior.
+	 * Default is `true`.
+	 */
+	object(index = -1, useRandom = true, failQuietly = true) {
 		switch (true) {
 			case this.obj.length === 1:
 				return this.obj[0];
@@ -75,7 +119,25 @@ class Pronoun {
 		}
 	}
 
-	possessive(index = -1, failQuietly = true, useRandom = true) {
+	/**# Possessive Getter
+	 * Get a possessive pronoun. By default, uses one
+	 * at random and fails silently by using the last
+	 * pronoun if you index out of bounds.
+	 *
+	 * @param index
+	 * Get `index`th pronoun, if specified. Fails to
+	 * last if out of bounds and failing quietly.
+	 * Default is `-1`.
+	 *
+	 * @param useRandom
+	 * Overrides default random use behavior.
+	 * Default is `true`.
+	 *
+	 * @param failQuietly
+	 * Overrides default quiet failure behavior.
+	 * Default is `true`.
+	 */
+	possessive(index = -1, useRandom = true, failQuietly = true) {
 		switch (true) {
 			case this.psv.length === 1:
 				return this.psv[0];
@@ -93,7 +155,26 @@ class Pronoun {
 		}
 	}
 
-	psAdjective(index = -1, failQuietly = true, useRandom = true) {
+	/**# Possessive Adjective Getter
+	 * Get a possessive adjective pronoun. By
+	 * default, uses one at random and fails
+	 * silently by using the last pronoun if you
+	 * index out of bounds.
+	 *
+	 * @param index
+	 * Get `index`th pronoun, if specified. Fails to
+	 * last if out of bounds and failing quietly.
+	 * Default is `-1`.
+	 *
+	 * @param useRandom
+	 * Overrides default random use behavior.
+	 * Default is `true`.
+	 *
+	 * @param failQuietly
+	 * Overrides default quiet failure behavior.
+	 * Default is `true`.
+	 */
+	psAdjective(index = -1, useRandom = true, failQuietly = true) {
 		switch (true) {
 			case this.psj.length === 1:
 				return this.psj[0];
@@ -111,7 +192,25 @@ class Pronoun {
 		}
 	}
 
-	reflexive(index = -1, failQuietly = true, useRandom = true) {
+	/**# Reflexive Getter
+	 * Get a reflexive pronoun. By default, uses one
+	 * at random and fails silently by using the last
+	 * pronoun if you index out of bounds.
+	 *
+	 * @param index
+	 * Get `index`th pronoun, if specified. Fails to
+	 * last if out of bounds and failing quietly.
+	 * Default is `-1`.
+	 *
+	 * @param useRandom
+	 * Overrides default random use behavior.
+	 * Default is `true`.
+	 *
+	 * @param failQuietly
+	 * Overrides default quiet failure behavior.
+	 * Default is `true`.
+	 */
+	reflexive(index = -1, useRandom = true, failQuietly = true) {
 		switch (true) {
 			case this.rfx.length === 1:
 				return this.rfx[0];
@@ -130,10 +229,18 @@ class Pronoun {
 	}
 }
 
+/**# `PronounSet` class
+ * A private class to construct the methods on
+ * sets of pronouns. Use {@linkcode Pronouny.set()}
+ * to produce a PronounSet for an entity. You can
+ * add pronouns to a set using {@linkcode PronounSet.add()},
+ * remove them using {@linkcode PronounSet.remove()}
+ */
 class PronounSet {
 	pronouns: Set<Pronoun>;
 	resolver: Pronouny;
 
+	/** @constructor */
 	constructor(
 		resolver: Pronouny,
 		pronouns:
@@ -171,6 +278,18 @@ class PronounSet {
 		return this;
 	}
 
+	/**# `.add()` to PronounSet
+	 * Adds pronoun/s from a given Pronoun or strings
+	 * (resolved using the {@linkcode Pronouny} instance
+	 * used to create this PronounSet.)
+	 *
+	 * @param pronoun
+	 * A string, Pronoun, or array of either, to be
+	 * appended to the PronounSet.
+	 *
+	 * @param failQuietly
+	 * Override default behavior to fail into 'they'.
+	 */
 	add(
 		pronoun: string | Pronoun | Array<string> | Array<Pronoun>,
 		failQuietly = this.resolver.config.failQuietly
@@ -184,7 +303,7 @@ class PronounSet {
 				break;
 			case pronoun instanceof Array:
 				pronoun.forEach((p) => {
-					this.add(p);
+					this.add(p, failQuietly);
 				});
 				break;
 			case failQuietly:
@@ -197,6 +316,18 @@ class PronounSet {
 		return this;
 	}
 
+	/**# `.remove()` from PronounSet
+	 * Remove pronoun/s from a given Pronoun or strings
+	 * (resolved using the {@linkcode Pronouny} instance
+	 * used to create this PronounSet.)
+	 *
+	 * @param pronoun
+	 * A string, Pronoun, or array of either, to be
+	 * appended to the PronounSet.
+	 *
+	 * @param failQuietly
+	 * Override default behavior to fail into no removal.
+	 */
 	remove(
 		set: PronounSet,
 		pronoun: string | Pronoun | Array<string> | Array<Pronoun>,
@@ -223,6 +354,26 @@ class PronounSet {
 		return this;
 	}
 
+	/**# `.use()` a PronounSet
+	 * A method to retrieve one Pronoun at random. Use with
+	 * {@link Pronoun|`Pronoun` methods} to get a specific
+	 * form. You can also directly use {@link PronounSet.subject|`.subject()`},
+	 * {@link PronounSet.object|`.object()`}, {@link PronounSet.possessive|`.possessive()`},
+	 * {@link PronounSet.possessive|`.possessive()`}, or
+	 * {@link PronounSet.reflexive|`.reflexive()`}. This is mostly
+	 * here if you'd like to explicitly get a `Pronoun` instance
+	 * from a `PronounSet`.
+	 *
+	 * @param index
+	 * Retrieve `index`th pronoun from insertion.
+	 *
+	 * @param failQuietly
+	 * Override default behavior to fail as per Pronouny config.
+	 *
+	 * @param useRandom
+	 * Override default behavior to use random as per
+	 * Pronouny config.
+	 */
 	use(
 		index = -1,
 		failQuietly = this.resolver.config.failQuietly,
@@ -251,6 +402,7 @@ class PronounSet {
 		}
 	}
 
+	/**Retrieves a random subject pronoun. */
 	subject(
 		index = -1,
 		failQuietly = this.resolver.config.failQuietly,
@@ -263,6 +415,7 @@ class PronounSet {
 		);
 	}
 
+	/**Retrieves a random object pronoun. */
 	object(
 		index = -1,
 		failQuietly = this.resolver.config.failQuietly,
@@ -275,6 +428,7 @@ class PronounSet {
 		);
 	}
 
+	/**Retrieves a random possessive pronoun. */
 	possessive(
 		index = -1,
 		failQuietly = this.resolver.config.failQuietly,
@@ -287,6 +441,7 @@ class PronounSet {
 		);
 	}
 
+	/**Retrieves a random possessive adjective pronoun. */
 	psAdjective(
 		index = -1,
 		failQuietly = this.resolver.config.failQuietly,
@@ -299,6 +454,7 @@ class PronounSet {
 		);
 	}
 
+	/**Retrieves a random reflexive pronoun. */
 	reflexive(
 		index = -1,
 		failQuietly = this.resolver.config.failQuietly,
@@ -355,9 +511,31 @@ const pronounWe: Pronoun = new Pronoun({
 	reflexive: ["ourselves"],
 });
 
+/**# Config
+ * `failQuietly`: Controls various quiet failure states.
+ * 
+ * `deepSearch`: Controls how deeply Pronouny will search
+ * for queries. By default, `string` parameters will
+ * only resolve using the first subject pronoun.
+ * 
+ * `useRandom`: Controls whether random selection will be
+ * used. If false, it will default to 0. If failing
+ * quietly and indexing out of bounds, it will use the
+ * last item.
+ */
 type PronounyConfig = {
+	/**Controls various quiet failure states. */
 	failQuietly?: boolean;
+
+	/**Controls how deeply Pronouny will search for
+	 * queries. By default, `string` parameters will
+	 * only resolve using the first subject pronoun. */
 	deepSearch?: boolean;
+
+	/**Controls whether random selection will be used.
+	 * If false, it will default to 0. If failing
+	 * quietly and indexing out of bounds, it will
+	 * use the last item. */
 	useRandom?: boolean;
 };
 const PronounyDefaultConfig: PronounyConfig = {
@@ -366,6 +544,30 @@ const PronounyDefaultConfig: PronounyConfig = {
 	useRandom: true,
 };
 
+/**# Pronouny
+ * A typed library intended to make English pronoun
+ * resolution easy. Instantiate in your project using
+ * `new Pronouny()`, optionally passing in a
+ * {@link PronounyConfig|`PronounyConfig` object}.
+ * 
+ * Once you have configured Pronouny, you may add new
+ * pronouns by using `new()` and passing in a set of
+ * pronouns. They are registered automatically. If you
+ * would like to register them manually, you can use
+ * `add()`. You can also `remove()` them if you would
+ * like to make them no longer valid.
+ * 
+ * You can produce a {@linkcode PronounSet} by using
+ * `set()`. By passing in a string, it will
+ * automatically resolve each, using a delimiter if
+ * specified. From there, you can chain methods like
+ * `subject()` to retrieve a subject pronoun for use.
+ * 
+ * If you would like to get a {@link Pronoun|`Pronoun` object}
+ * from a given text, you can use `resolve()`. Pass
+ * in a string and it will return the entire matched
+ * `Pronoun` object.
+ */
 export default class Pronouny {
 	config: PronounyConfig;
 	resolveMap: Map<string, Pronoun>;
@@ -383,6 +585,11 @@ export default class Pronouny {
 		return this;
 	}
 
+	/**# `.resolve()` a Pronoun
+	 * Returns a pronoun from a given string. Uses
+	 * Pronouny's config to determine the depth of search.
+	 * By default, only checks the first subject pronoun.
+	 */
 	resolve(pronoun: string, deepSearch = this.config.deepSearch): Pronoun {
 		const resolvedPronoun = this.resolveMap.get(pronoun);
 		switch (true) {
@@ -407,16 +614,30 @@ export default class Pronouny {
 		}
 	}
 
+	/**# `.add()` an Unlisted Pronoun
+	 * If you made a `.new()` Pronoun but disabled
+	 * `autoAppend`, you can later append it back by
+	 * using this method. Returns `Pronouny`.
+	 */
 	add(pronoun: Pronoun) {
 		this.resolveMap.set(pronoun.sbj[0], pronoun);
 		return this;
 	}
 
+	/**# `.remove()` a Pronoun
+	 * Renders a given Pronoun invalid within this
+	 * Pronouny instance. Returns `Pronouny`.
+	 */
 	remove(pronoun: Pronoun) {
 		this.resolveMap.delete(pronoun.sbj[0]);
 		return this;
 	}
 
+	/**# Make a `.set()` of Pronouns
+	 * Returns a {@linkcode PronounSet} from a given
+	 * string or array of strings. You can specify the
+	 * delimiter to be used. By default, it is `/`.
+	 */
 	set(pronouns: string | Array<string>, delimiter: string = "/"): PronounSet {
 		if (typeof pronouns === "string" && delimiter !== undefined) {
 			pronouns = pronouns.split(delimiter);
@@ -425,6 +646,25 @@ export default class Pronouny {
 		return result;
 	}
 
+	/**# `.new()`
+	 * Returns a new pronoun. Takes in an object with
+	 * a subject, object, possessive, possessive adjective,
+	 * and reflexive string/s, and returns the Pronoun.
+	 * By default, appends the new `Pronoun` to the Pronouny
+	 * `resolveMap`.
+	 *
+	 * @param pronouns
+	 * Takes an object with the structure of a `Pronoun`,
+	 * with `Array<string>` or a `string` for `subject`,
+	 * `object`, `possessive`, `psAdjective`, and
+	 * `reflexive`.
+	 *
+	 * @param autoAppend
+	 * Will automatically add the new Pronoun to the
+	 * Pronouny instance. If false, will just return a
+	 * {@link Pronoun|`Pronoun` object} without registering.
+	 * You may register it later with {@link Pronouny.add}. 
+	 */
 	new(
 		pronouns: {
 			subject: Array<string> | string;
