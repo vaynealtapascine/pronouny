@@ -307,7 +307,9 @@ class PronounSet {
 				});
 				break;
 			case failQuietly:
-				this.pronouns.add(this.resolver.resolve("they"));
+				this.pronouns.add(
+					this.resolver.resolve(this.resolver.config.fallbackPronoun)
+				);
 				break;
 			case !failQuietly:
 			default:
@@ -396,7 +398,9 @@ class PronounSet {
 			case indexable[index] !== undefined:
 				return indexable[index];
 			case failQuietly:
-				return this.resolver.resolve("they");
+				return this.resolver.resolve(
+					this.resolver.config.fallbackPronoun
+				);
 			default:
 				throw new Error(`Index ${index} out of range`);
 		}
@@ -522,6 +526,11 @@ const pronounWe: Pronoun = new Pronoun({
  * used. If false, it will default to 0. If failing
  * quietly and indexing out of bounds, it will use the
  * last item.
+ *
+ * `fallbackPronoun`: Controls what is considered the
+ * default pronoun for when one is not assigned or for
+ * quiet failure states. By default, this is `they`. **It
+ * is not recommended to change this.**
  */
 type PronounyConfig = {
 	/**Controls various quiet failure states. */
@@ -537,11 +546,22 @@ type PronounyConfig = {
 	 * quietly and indexing out of bounds, it will
 	 * use the last item. */
 	useRandom: boolean;
+
+	/**Controls what is considered the default pronoun
+	 * for when one is not assigned or for quiet failure
+	 * states. By default, this is `they`. **It is not
+	 * recommended to change this.**
+	 *
+	 * If you remove `they` from the Pronouny instance,
+	 * you are responsible for setting this to a valid
+	 * pronoun string and ensuring it will resolve. */
+	fallbackPronoun: string;
 };
 const PronounyDefaultConfig: PronounyConfig = {
 	failQuietly: true,
 	deepSearch: false,
 	useRandom: true,
+	fallbackPronoun: "they",
 };
 
 /**# Pronouny
@@ -608,7 +628,7 @@ export default class Pronouny {
 					return searchResult;
 				}
 			case this.config.failQuietly:
-				return this.resolveMap.get("they")!;
+				return this.resolveMap.get(this.config.fallbackPronoun)!;
 			default:
 				throw new Error(`Pronoun "${pronoun}" not found`);
 		}
@@ -629,6 +649,11 @@ export default class Pronouny {
 	 * Pronouny instance. Returns `Pronouny`.
 	 */
 	remove(pronoun: Pronoun) {
+		if (pronoun === this.resolveMap.get(this.config.fallbackPronoun)) {
+			throw new Error(
+				`Cannot remove fallback pronoun. Assign a new one before removal.`
+			);
+		}
 		this.resolveMap.delete(pronoun.sbj[0]);
 		return this;
 	}
