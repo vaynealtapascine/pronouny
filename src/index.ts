@@ -254,25 +254,25 @@ class PronounSet {
 		this.resolver = resolver;
 		switch (true) {
 			case Array.isArray(pronouns):
-				pronouns.forEach((x) => {
+				for (const x of pronouns) {
 					if (x instanceof Pronoun) {
 						this.pronouns.add(x);
 					} else {
 						this.pronouns.add(resolver.resolve(x));
 					}
-				});
+				}
 				break;
 			case typeof pronouns === "string":
 				this.pronouns.add(resolver.resolve(pronouns));
 				break;
 			default:
-				pronouns.forEach((x) => {
+				for (const x of pronouns) {
 					if (x instanceof Pronoun) {
 						this.pronouns.add(x);
 					} else {
 						this.pronouns.add(resolver.resolve(x));
 					}
-				});
+				}
 				break;
 		}
 		return this;
@@ -302,9 +302,9 @@ class PronounSet {
 				this.pronouns.add(this.resolver.resolve(pronoun));
 				break;
 			case pronoun instanceof Array:
-				pronoun.forEach((p) => {
+				for (const p of pronoun) {
 					this.add(p, failQuietly);
-				});
+				}
 				break;
 			case failQuietly:
 				this.pronouns.add(
@@ -343,9 +343,9 @@ class PronounSet {
 				set.pronouns.delete(this.resolver.resolve(pronoun));
 				break;
 			case pronoun instanceof Array:
-				pronoun.forEach((p) => {
+				for (const p of pronoun) {
 					this.remove(set, p);
-				});
+				}
 				break;
 			case failQuietly:
 				break;
