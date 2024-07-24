@@ -331,20 +331,19 @@ class PronounSet {
 	 * Override default behavior to fail into no removal.
 	 */
 	remove(
-		set: PronounSet,
 		pronoun: string | Pronoun | Array<string> | Array<Pronoun>,
 		failQuietly = this.resolver.config.failQuietly
 	) {
 		switch (true) {
 			case pronoun instanceof Pronoun:
-				set.pronouns.delete(pronoun);
+				this.pronouns.delete(pronoun);
 				break;
 			case typeof pronoun === "string":
-				set.pronouns.delete(this.resolver.resolve(pronoun));
+				this.pronouns.delete(this.resolver.resolve(pronoun));
 				break;
 			case pronoun instanceof Array:
 				for (const p of pronoun) {
-					this.remove(set, p);
+					this.remove(p);
 				}
 				break;
 			case failQuietly:
