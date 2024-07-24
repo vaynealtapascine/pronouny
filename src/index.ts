@@ -525,18 +525,18 @@ const pronounWe: Pronoun = new Pronoun({
  */
 type PronounyConfig = {
 	/**Controls various quiet failure states. */
-	failQuietly?: boolean;
+	failQuietly: boolean;
 
 	/**Controls how deeply Pronouny will search for
 	 * queries. By default, `string` parameters will
 	 * only resolve using the first subject pronoun. */
-	deepSearch?: boolean;
+	deepSearch: boolean;
 
 	/**Controls whether random selection will be used.
 	 * If false, it will default to 0. If failing
 	 * quietly and indexing out of bounds, it will
 	 * use the last item. */
-	useRandom?: boolean;
+	useRandom: boolean;
 };
 const PronounyDefaultConfig: PronounyConfig = {
 	failQuietly: true,
