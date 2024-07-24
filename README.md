@@ -1,6 +1,6 @@
 # Pronouny
 
-**Pronouny** is a typed library intended to make programmatically resolving English pronouns easier. \
+**Pronouny** is a typed library intended to make programmatically resolving English pronouns easier.
 
 ## Installation
 
@@ -26,6 +26,9 @@ const p = new Pronouny({
 	// Will default to using random pronouns in arrays.
 	// Set to false to force using 0 index.
 	useRandom: true,
+
+	// Will default to using "they" as a fallback pronoun.
+	fallbackPronoun: "they",
 });
 
 // Create a new Pronoun object using Pronouny.new()
@@ -49,7 +52,7 @@ p.add(pronounZe);
 p.remove(p.resolve("I"));
 // this deletes the "I" pronoun from the map.
 
-// Methods are chainable and you can reach the Pronoun class.
+// Methods are chainable so you can reach the Pronoun class.
 p.add(pronounZe).set("he/they").use().subject();
 //   ^Pronouny      ^PronounSet    ^Pronoun  ^string
 
@@ -58,7 +61,7 @@ const vayne = {
 	username: "vaynegarden",
 	pronouns: p.set("she/ze/they"),
 };
-// from there, you can use `[PronounSet].use()` to get a random pronoun.
+// from there, you can use `[PronounSet].use()` to get a random `Pronoun`.
 
 // Resolve the pronouns in your app by referencing the form
 // that you need. There's `subject`, `object`, `possessive`,
@@ -72,6 +75,12 @@ console.log(
 ```
 
 ## Changelog
+
+### v0.4.0
+
+-   Optimized `forEach()` calls to use `for` loops instead.
+-   Added `fallbackPronoun` option to allow for configuration of pronoun to use in case of quiet failure states.
+-   Removed redundant `set` parameter from `[PronounSet].remove()` calls.
 
 ### v0.3.1
 
