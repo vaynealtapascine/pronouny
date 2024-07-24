@@ -597,13 +597,13 @@ export default class Pronouny {
 				return resolvedPronoun;
 			case deepSearch:
 				let searchResult;
-				this.resolveMap.forEach((mapPronoun) => {
-					Object.values(mapPronoun).forEach((type) => {
+				for (const [_, value] of this.resolveMap) {
+					for (const type of Object.values(value)) {
 						if (type.includes(pronoun)) {
-							searchResult = mapPronoun;
+							searchResult = value;
 						}
-					});
-				});
+					}
+				}
 				if (searchResult) {
 					return searchResult;
 				}
