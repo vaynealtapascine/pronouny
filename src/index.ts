@@ -2,6 +2,10 @@ function randomToLimit(limit: number) {
 	return Math.floor(Math.random() * limit);
 }
 
+function isUpperCase(str: string) {
+	return str === str.toUpperCase() && str !== str.toLowerCase();
+}
+
 /**# `Pronoun` class
  * A private class to construct the methods for pronoun
  * access. Use {@link Pronouny} to create and
@@ -227,6 +231,28 @@ class Pronoun {
 				);
 		}
 	}
+
+	/**# `.parse()` a Template String
+	 * A method to parse tagged template strings and provide
+	 * the correct pronouns, as per a particular PronounSet.
+	 */
+	parse(strings: TemplateStringsArray, ...args: Array<string>) {
+		let result = strings[0];
+		for (let i = 0; i < args.length; i++) {
+			const upperCaseFlag = isUpperCase(args[i][0]);
+
+			/* TODO: Provide a method for accessing Pronouny instance from here.
+			 * new Pronouny().identify() is just silly.
+			 */
+			// @ts-expect-error
+			let argSub = this[new Pronouny().identify(args[i].toLowerCase())]();
+			if (upperCaseFlag) {
+				argSub = argSub[0].toUpperCase() + argSub.slice(1);
+			}
+			result += argSub + strings[i + 1];
+		}
+		return result;
+	}
 }
 
 /**# `PronounSet` class
@@ -363,7 +389,7 @@ class PronounSet {
 	 * {@link PronounSet.possessive|`.possessive()`}, or
 	 * {@link PronounSet.reflexive|`.reflexive()`}. This is mostly
 	 * here if you'd like to explicitly get a `Pronoun` instance
-	 * from a `PronounSet`.
+	 * from a `PronounSet`. Also useful for narrowing {@link PronounSet.parse|`.parse()`}.
 	 *
 	 * @param index
 	 * Retrieve `index`th pronoun from insertion.
@@ -469,6 +495,24 @@ class PronounSet {
 			useRandom
 		);
 	}
+
+	/**# Tagged Template Parsing
+	 * A method to parse tagged template strings and provide
+	 * the correct pronouns, as per a particular PronounSet.
+	 */
+	parse(strings: TemplateStringsArray, ...args: Array<string>) {
+		let result = strings[0];
+		for (let i = 0; i < args.length; i++) {
+			const upperCaseFlag = isUpperCase(args[i][0]);
+			// @ts-expect-error
+			let argSub = this[this.resolver.identify(args[i].toLowerCase())]();
+			if (upperCaseFlag) {
+				argSub = argSub[0].toUpperCase() + argSub.slice(1);
+			}
+			result += argSub + strings[i + 1];
+		}
+		return result;
+	}
 }
 
 const pronounHe: Pronoun = new Pronoun({
@@ -509,8 +553,8 @@ const pronounI: Pronoun = new Pronoun({
 const pronounWe: Pronoun = new Pronoun({
 	subject: ["we"],
 	object: ["us"],
-	possessive: ["our"],
-	psAdjective: ["ours"],
+	possessive: ["ours"],
+	psAdjective: ["our"],
 	reflexive: ["ourselves"],
 });
 
@@ -628,6 +672,45 @@ export default class Pronouny {
 				}
 			case this.config.failQuietly:
 				return this.resolveMap.get(this.config.fallbackPronoun)!;
+			default:
+				throw new Error(`Pronoun "${pronoun}" not found`);
+		}
+	}
+
+	/**# `.identify()` a Pronoun
+	 * Returns a string describing the type of pronoun
+	 * passed in. Returns `subject`, `object`,
+	 * `possessive`, `possessive adjective`, or
+	 * `reflexive`. You can use this to access other
+	 * pronouns by retrieving via string indexing.
+	 * **This method is case-sensitive and does not
+	 * have a quiet failure state.**
+	 */
+	identify(pronoun: string): string {
+		let pronounType = "";
+		for (const [_, value] of this.resolveMap) {
+			for (
+				let i = 0, types = Object.values(value);
+				i < types.length;
+				i++
+			) {
+				const type = types[i];
+				if (type.includes(pronoun)) {
+					pronounType = Object.keys(value)[i];
+				}
+			}
+		}
+		switch (pronounType) {
+			case "sbj":
+				return "subject";
+			case "obj":
+				return "object";
+			case "psv":
+				return "possessive";
+			case "psj":
+				return "psAdjective";
+			case "rfx":
+				return "reflexive";
 			default:
 				throw new Error(`Pronoun "${pronoun}" not found`);
 		}
