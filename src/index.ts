@@ -2,6 +2,10 @@ function randomToLimit(limit: number) {
 	return Math.floor(Math.random() * limit);
 }
 
+function isUpperCase(str: string) {
+	return str === str.toUpperCase() && str !== str.toLowerCase();
+}
+
 /**# `Pronoun` class
  * A private class to construct the methods for pronoun
  * access. Use {@link Pronouny} to create and
@@ -10,20 +14,25 @@ function randomToLimit(limit: number) {
  * and `rfx`.
  */
 class Pronoun {
+	[key: string]: any;
 	sbj: Array<string>;
 	obj: Array<string>;
 	psv: Array<string>;
 	psj: Array<string>;
 	rfx: Array<string>;
+	resolver?: Pronouny;
 
 	/** @constructor */
-	constructor(pronouns: {
-		subject: Array<string> | string;
-		object: Array<string> | string;
-		possessive: Array<string> | string;
-		psAdjective: Array<string> | string;
-		reflexive: Array<string> | string;
-	}) {
+	constructor(
+		pronouns: {
+			subject: Array<string> | string;
+			object: Array<string> | string;
+			possessive: Array<string> | string;
+			psAdjective: Array<string> | string;
+			reflexive: Array<string> | string;
+		},
+		resolver?: Pronouny
+	) {
 		this.sbj =
 			typeof pronouns.subject === "string"
 				? [pronouns.subject]
@@ -44,6 +53,9 @@ class Pronoun {
 			typeof pronouns.reflexive === "string"
 				? [pronouns.reflexive]
 				: pronouns.reflexive;
+		if (resolver) {
+			this.resolver = resolver;
+		}
 		return this;
 	}
 
@@ -227,6 +239,29 @@ class Pronoun {
 				);
 		}
 	}
+
+	/**# `.parse()` a Template String
+	 * A method to parse tagged template strings and provide
+	 * the correct pronouns, as per a particular PronounSet.
+	 */
+	parse(strings: TemplateStringsArray, ...args: Array<string>) {
+		let result = strings[0];
+		for (let i = 0; i < args.length; i++) {
+			const upperCaseFlag = isUpperCase(args[i][0]);
+			let argSub =
+				this.resolver?.identify(args[i].toLowerCase()) !== ""
+					? this.use()[
+							this.resolver?.identify(args[i].toLowerCase()) ||
+								new Pronouny().identify(args[i].toLowerCase())!
+					  ]()
+					: args[i];
+			if (upperCaseFlag) {
+				argSub = argSub[0].toUpperCase() + argSub.slice(1);
+			}
+			result += argSub + strings[i + 1];
+		}
+		return result;
+	}
 }
 
 /**# `PronounSet` class
@@ -363,7 +398,7 @@ class PronounSet {
 	 * {@link PronounSet.possessive|`.possessive()`}, or
 	 * {@link PronounSet.reflexive|`.reflexive()`}. This is mostly
 	 * here if you'd like to explicitly get a `Pronoun` instance
-	 * from a `PronounSet`.
+	 * from a `PronounSet`. Also useful for narrowing {@link PronounSet.parse|`.parse()`}.
 	 *
 	 * @param index
 	 * Retrieve `index`th pronoun from insertion.
@@ -469,50 +504,31 @@ class PronounSet {
 			useRandom
 		);
 	}
-}
 
-const pronounHe: Pronoun = new Pronoun({
-	subject: ["he"],
-	object: ["him"],
-	possessive: ["his"],
-	psAdjective: ["his"],
-	reflexive: ["himself"],
-});
-const pronounShe: Pronoun = new Pronoun({
-	subject: ["she"],
-	object: ["her"],
-	possessive: ["hers"],
-	psAdjective: ["her"],
-	reflexive: ["herself"],
-});
-const pronounThey: Pronoun = new Pronoun({
-	subject: ["they"],
-	object: ["them"],
-	possessive: ["theirs"],
-	psAdjective: ["their"],
-	reflexive: ["theirself", "theirselves", "themselves", "themself"],
-});
-const pronounYou: Pronoun = new Pronoun({
-	subject: ["you"],
-	object: ["you"],
-	possessive: ["yours"],
-	psAdjective: ["your"],
-	reflexive: ["yourself"],
-});
-const pronounI: Pronoun = new Pronoun({
-	subject: ["I"],
-	object: ["me"],
-	possessive: ["mine"],
-	psAdjective: ["my"],
-	reflexive: ["myself"],
-});
-const pronounWe: Pronoun = new Pronoun({
-	subject: ["we"],
-	object: ["us"],
-	possessive: ["our"],
-	psAdjective: ["ours"],
-	reflexive: ["ourselves"],
-});
+	/**# Template Parsing
+	 * A method to select only one pronoun from the set
+	 * and reuse it for the entire string. This is useful
+	 * for when you want to use the same pronoun for a
+	 * sentence.
+	 */
+	parse(strings: TemplateStringsArray, ...args: Array<string>) {
+		let result = strings[0];
+		for (let i = 0; i < args.length; i++) {
+			const upperCaseFlag = isUpperCase(args[i][0]);
+			let argSub =
+				this.resolver.identify(args[i].toLowerCase()) !== ""
+					? this.use()[
+							this.resolver.identify(args[i].toLowerCase())
+					  ]()
+					: args[i];
+			if (upperCaseFlag) {
+				argSub = argSub[0].toUpperCase() + argSub.slice(1);
+			}
+			result += argSub + strings[i + 1];
+		}
+		return result;
+	}
+}
 
 /**# Config
  * `failQuietly`: Controls various quiet failure states.
@@ -556,12 +572,6 @@ type PronounyConfig = {
 	 * pronoun string and ensuring it will resolve. */
 	fallbackPronoun: string;
 };
-const PronounyDefaultConfig: PronounyConfig = {
-	failQuietly: true,
-	deepSearch: false,
-	useRandom: true,
-	fallbackPronoun: "they",
-};
 
 /**# Pronouny
  * A typed library intended to make English pronoun
@@ -588,18 +598,101 @@ const PronounyDefaultConfig: PronounyConfig = {
  * `Pronoun` object.
  */
 export default class Pronouny {
+	[keyof: string]: any;
 	config: PronounyConfig;
 	resolveMap: Map<string, Pronoun>;
 
-	constructor(config: PronounyConfig = PronounyDefaultConfig) {
-		this.config = Object.assign(PronounyDefaultConfig, config);
+	default = {
+		he: new Pronoun(
+			{
+				subject: ["he"],
+				object: ["him"],
+				possessive: ["his"],
+				psAdjective: ["his"],
+				reflexive: ["himself"],
+			},
+			this
+		),
+		she: new Pronoun(
+			{
+				subject: ["she"],
+				object: ["her"],
+				possessive: ["hers"],
+				psAdjective: ["her"],
+				reflexive: ["herself"],
+			},
+			this
+		),
+		they: new Pronoun(
+			{
+				subject: ["they"],
+				object: ["them"],
+				possessive: ["theirs"],
+				psAdjective: ["their"],
+				reflexive: [
+					"theirself",
+					"theirselves",
+					"themselves",
+					"themself",
+				],
+			},
+			this
+		),
+		you: new Pronoun(
+			{
+				subject: ["you"],
+				object: ["you"],
+				possessive: ["yours"],
+				psAdjective: ["your"],
+				reflexive: ["yourself"],
+			},
+			this
+		),
+		i: new Pronoun(
+			{
+				subject: ["I"],
+				object: ["me"],
+				possessive: ["mine"],
+				psAdjective: ["my"],
+				reflexive: ["myself"],
+			},
+			this
+		),
+		we: new Pronoun(
+			{
+				subject: ["we"],
+				object: ["us"],
+				possessive: ["ours"],
+				psAdjective: ["our"],
+				reflexive: ["ourselves"],
+			},
+			this
+		),
+		config: {
+			failQuietly: true,
+			deepSearch: false,
+			useRandom: true,
+			fallbackPronoun: "they",
+		},
+	};
+
+	constructor(
+		config: PronounyConfig = {
+			failQuietly: true,
+			deepSearch: false,
+			useRandom: true,
+			fallbackPronoun: "they",
+		}
+	) {
+		const defaults = this.default;
+		this.config = Object.assign(defaults.config, config);
 		this.resolveMap = new Map<string, Pronoun>([
-			[pronounThey.sbj[0], pronounThey],
-			[pronounYou.sbj[0], pronounYou],
-			[pronounWe.sbj[0], pronounWe],
-			[pronounI.sbj[0], pronounI],
-			[pronounHe.sbj[0], pronounHe],
-			[pronounShe.sbj[0], pronounShe],
+			[defaults.they.sbj[0], defaults.they],
+			[defaults.you.sbj[0], defaults.you],
+			[defaults.we.sbj[0], defaults.we],
+			[defaults.i.sbj[0], defaults.i],
+			[defaults.he.sbj[0], defaults.he],
+			[defaults.she.sbj[0], defaults.she],
 		]);
 		return this;
 	}
@@ -633,12 +726,55 @@ export default class Pronouny {
 		}
 	}
 
+	/**# `.identify()` a Pronoun
+	 * Returns a string describing the type of pronoun
+	 * passed in. Returns `subject`, `object`,
+	 * `possessive`, `possessive adjective`, or
+	 * `reflexive`. You can use this to access other
+	 * pronouns by retrieving via string indexing.
+	 * **This method is case-sensitive and does not
+	 * have a quiet failure state.**
+	 */
+	identify(pronoun: string): string {
+		let pronounType = "";
+		for (const [_, value] of this.resolveMap) {
+			for (
+				let i = 0, types = Object.values(value) as Array<Array<string>>;
+				i < types.length;
+				i++
+			) {
+				let type = types[i];
+				if (Object.keys(value)[i] === "resolver") {
+					continue;
+				}
+				if (type.includes(pronoun)) {
+					pronounType = Object.keys(value)[i];
+				}
+			}
+		}
+		switch (pronounType) {
+			case "sbj":
+				return "subject";
+			case "obj":
+				return "object";
+			case "psv":
+				return "possessive";
+			case "psj":
+				return "psAdjective";
+			case "rfx":
+				return "reflexive";
+			default:
+				return "";
+		}
+	}
+
 	/**# `.add()` an Unlisted Pronoun
 	 * If you made a `.new()` Pronoun but disabled
 	 * `autoAppend`, you can later append it back by
 	 * using this method. Returns `Pronouny`.
 	 */
 	add(pronoun: Pronoun) {
+		pronoun.resolver = this;
 		this.resolveMap.set(pronoun.sbj[0], pronoun);
 		return this;
 	}
@@ -653,6 +789,7 @@ export default class Pronouny {
 				`Cannot remove fallback pronoun. Assign a new one before removal.`
 			);
 		}
+		pronoun.resolver = undefined;
 		this.resolveMap.delete(pronoun.sbj[0]);
 		return this;
 	}

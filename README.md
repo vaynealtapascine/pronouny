@@ -72,9 +72,23 @@ console.log(
 // This returns "vaynegarden updated her status", "vaynegarden
 // updated hir status", or "vaynegarden updated their status",
 // selected randomly among the three.
+
+// Alternatively, you can use the `parse()` template string method
+// to parse a string with pronouns and write in reasonably natural syntax.
+// This functionality will be updated more in the future.
+console.log(
+	vayne.pronouns.parse`${vayne.username} has updated ${"her"} status.`
+);
+// Returns the same as above.
 ```
 
 ## Changelog
+
+### v0.5.0
+
+-   Added `parse()` method to `Pronoun` and `PronounSet` to allow for parsing of strings into their correct pronoun forms.
+-   Added optional `resolver` property to `Pronoun`s to allow retracing to related Pronouny instance.
+-   Added `identify()` method to `Pronouny` to allow for identification for type of pronouns.
 
 ### v0.4.0
 
