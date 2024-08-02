@@ -566,12 +566,6 @@ type PronounyConfig = {
 	 * pronoun string and ensuring it will resolve. */
 	fallbackPronoun: string;
 };
-const PronounyDefaultConfig: PronounyConfig = {
-	failQuietly: true,
-	deepSearch: false,
-	useRandom: true,
-	fallbackPronoun: "they",
-};
 
 /**# Pronouny
  * A typed library intended to make English pronoun
@@ -668,18 +662,24 @@ export default class Pronouny {
 			},
 			this
 		),
+		config: {
+			failQuietly: true,
+			deepSearch: false,
+			useRandom: true,
+			fallbackPronoun: "they",
+		},
 	};
 
-	constructor(config: PronounyConfig = PronounyDefaultConfig) {
-		const pronouns = this.default;
-		this.config = Object.assign(PronounyDefaultConfig, config);
+	constructor(config: PronounyConfig = this.default.config) {
+		const defaults = this.default;
+		this.config = Object.assign(defaults.config, config);
 		this.resolveMap = new Map<string, Pronoun>([
-			[pronouns.they.sbj[0], pronouns.they],
-			[pronouns.you.sbj[0], pronouns.you],
-			[pronouns.we.sbj[0], pronouns.we],
-			[pronouns.i.sbj[0], pronouns.i],
-			[pronouns.he.sbj[0], pronouns.he],
-			[pronouns.she.sbj[0], pronouns.she],
+			[defaults.they.sbj[0], defaults.they],
+			[defaults.you.sbj[0], defaults.you],
+			[defaults.we.sbj[0], defaults.we],
+			[defaults.i.sbj[0], defaults.i],
+			[defaults.he.sbj[0], defaults.he],
+			[defaults.she.sbj[0], defaults.she],
 		]);
 		return this;
 	}
@@ -761,6 +761,7 @@ export default class Pronouny {
 	 * using this method. Returns `Pronouny`.
 	 */
 	add(pronoun: Pronoun) {
+		pronoun.resolver = this;
 		this.resolveMap.set(pronoun.sbj[0], pronoun);
 		return this;
 	}
@@ -775,6 +776,7 @@ export default class Pronouny {
 				`Cannot remove fallback pronoun. Assign a new one before removal.`
 			);
 		}
+		pronoun.resolver = undefined;
 		this.resolveMap.delete(pronoun.sbj[0]);
 		return this;
 	}
@@ -821,7 +823,7 @@ export default class Pronouny {
 		},
 		autoAppend = true
 	) {
-		const newPronoun = new Pronoun(pronouns, this);
+		const newPronoun = new Pronoun(pronouns);
 		if (autoAppend) {
 			this.add(newPronoun);
 		}
