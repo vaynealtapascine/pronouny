@@ -249,10 +249,12 @@ class Pronoun {
 		for (let i = 0; i < args.length; i++) {
 			const upperCaseFlag = isUpperCase(args[i][0]);
 			let argSub =
-				this[
-					this.resolver?.identify(args[i].toLowerCase()) ||
-						new Pronouny().identify(args[i].toLowerCase())!
-				]();
+				this.resolver?.identify(args[i].toLowerCase()) !== ""
+					? this.use()[
+							this.resolver?.identify(args[i].toLowerCase()) ||
+								new Pronouny().identify(args[i].toLowerCase())!
+					  ]()
+					: args[i];
 			if (upperCaseFlag) {
 				argSub = argSub[0].toUpperCase() + argSub.slice(1);
 			}
@@ -514,7 +516,11 @@ class PronounSet {
 		for (let i = 0; i < args.length; i++) {
 			const upperCaseFlag = isUpperCase(args[i][0]);
 			let argSub =
-				this.use()[this.resolver.identify(args[i].toLowerCase())]();
+				this.resolver.identify(args[i].toLowerCase()) !== ""
+					? this.use()[
+							this.resolver.identify(args[i].toLowerCase())
+					  ]()
+					: args[i];
 			if (upperCaseFlag) {
 				argSub = argSub[0].toUpperCase() + argSub.slice(1);
 			}
@@ -670,7 +676,14 @@ export default class Pronouny {
 		},
 	};
 
-	constructor(config: PronounyConfig = this.default.config) {
+	constructor(
+		config: PronounyConfig = {
+			failQuietly: true,
+			deepSearch: false,
+			useRandom: true,
+			fallbackPronoun: "they",
+		}
+	) {
 		const defaults = this.default;
 		this.config = Object.assign(defaults.config, config);
 		this.resolveMap = new Map<string, Pronoun>([
@@ -751,7 +764,7 @@ export default class Pronouny {
 			case "rfx":
 				return "reflexive";
 			default:
-				throw new Error(`Pronoun "${pronoun}" not found`);
+				return "";
 		}
 	}
 
