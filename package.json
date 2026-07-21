@@ -1,20 +1,35 @@
 {
 	"name": "pronouny",
-	"version": "0.5.0",
+	"version": "1.0.0",
 	"description": "a small, typed utility library to determine the correct pronoun from a string and several utility functions.",
 	"main": "./lib/cjs/index.js",
 	"module": "./lib/esm/index.js",
+	"types": "./lib/esm/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./lib/esm/index.d.ts",
+			"import": "./lib/esm/index.js",
+			"require": "./lib/cjs/index.js"
+		},
+		"./package.json": "./package.json"
+	},
+	"sideEffects": false,
 	"files": [
 		"lib/"
 	],
 	"scripts": {
-		"test": "tsc -p tsconfig.json && node ./lib/cjs/index.js",
-		"tsc": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json",
-		"prepublishOnly": "npm run tsc"
+		"clean": "node -e \"require('fs').rmSync('lib',{recursive:true,force:true})\"",
+		"build": "npm run clean && tsc -p tsconfig.json && tsc -p tsconfig-cjs.json && node scripts/fixup.js",
+		"typecheck": "tsc --noEmit -p tsconfig.json",
+		"test": "jest",
+		"prepublishOnly": "npm run build"
 	},
 	"author": "",
 	"license": "ISC",
 	"devDependencies": {
+		"@types/jest": "^29.5.14",
+		"jest": "^29.7.0",
+		"ts-jest": "^29.2.4",
 		"typescript": "^5.3.3"
 	},
 	"keywords": [
